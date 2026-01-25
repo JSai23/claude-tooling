@@ -1,8 +1,14 @@
 ---
 name: 3-continue
 description: Continue working on the current task
+argument-hint: "[from step]"
 disable-model-invocation: true
 ---
+## Resume From
+$ARGUMENTS
+
+---
+
 Continue where you left off.
 
 Look at:

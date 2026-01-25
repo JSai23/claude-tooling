@@ -1,8 +1,14 @@
 ---
 name: 5-test
 description: Write thorough tests
+argument-hint: "[focus area]"
 disable-model-invocation: true
 ---
+## Focus
+$ARGUMENTS
+
+---
+
 Write comprehensive tests for the implemented code.
 
 ## Testing Philosophy

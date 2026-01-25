@@ -1,8 +1,14 @@
 ---
 name: 0-fix
 description: Fix all remaining issues from audits
+argument-hint: "[issue or area]"
 disable-model-invocation: true
 ---
+## Focus
+$ARGUMENTS
+
+---
+
 Systematically fix everything outstanding.
 
 ## Process

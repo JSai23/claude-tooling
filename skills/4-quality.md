@@ -1,8 +1,14 @@
 ---
 name: 4-quality
 description: Code quality pass - refactoring and cleanup
+argument-hint: "[files or dirs]"
 disable-model-invocation: true
 ---
+## Target
+$ARGUMENTS
+
+---
+
 Improve code quality without changing behavior. The code should feel simpler and more understandeable after this. This comes first so to remove noise from further clean up, testing etc.
 
 ## Focus Areas

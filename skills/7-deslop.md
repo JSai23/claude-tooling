@@ -1,8 +1,14 @@
 ---
 name: 7-deslop
 description: Clean up AI slop - remove cruft and unnecessary code
+argument-hint: "[files or dirs]"
 disable-model-invocation: true
 ---
+## Target
+$ARGUMENTS
+
+---
+
 Remove AI-generated cruft from the codebase.
 
 ## What is Slop?

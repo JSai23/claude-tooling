@@ -12,15 +12,15 @@ Personal Claude Code extensions: skills, agents, hooks, and rules.
 
 ### Workflow (Shaw-style, 1-0)
 - `/1-plan` - Research and planning (forks to planner agent)
-- `/2-implement` - Execute the plan
-- `/3-continue` - Keep going
-- `/4-quality` - Refactoring pass
-- `/5-test` - Write tests
+- `/2-implement [area]` - Execute the plan
+- `/3-continue [from step]` - Keep going
+- `/4-quality [files]` - Refactoring pass
+- `/5-test [focus]` - Write tests
 - `/6-larp` - Find fake code (forks to auditor)
-- `/7-deslop` - Remove AI cruft
+- `/7-deslop [files]` - Remove AI cruft
 - `/8-production` - Production readiness check (forks to validator)
 - `/9-review` - Final review (forks to auditor)
-- `/0-fix` - Fix all remaining issues
+- `/0-fix [issue]` - Fix all remaining issues
 
 ### Automation
 - `/auto-add-skill` - Create new skills
@@ -32,6 +32,7 @@ Personal Claude Code extensions: skills, agents, hooks, and rules.
 - `/create-handoff` - Create session handoff
 - `/resume-handoff` - Resume from handoff
 - `/tldr-code` - TLDR CLI reference
+- `/doc [type]` - Generate documentation (api, readme, changelog, design)
 
 ## Agents
 
@@ -44,7 +45,7 @@ Personal Claude Code extensions: skills, agents, hooks, and rules.
 
 ```
 ~/claude-tooling/
-├── skills/     # 17 skills
+├── skills/     # 18 skills
 ├── agents/     # 4 agents
 ├── hooks/      # statusline.py
 ├── rules/      # tldr-cli.md

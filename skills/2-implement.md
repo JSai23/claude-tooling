@@ -1,8 +1,14 @@
 ---
 name: 2-implement
 description: Execute the agreed plan with real code
+argument-hint: "[area or focus]"
 disable-model-invocation: true
 ---
+## Focus
+$ARGUMENTS
+
+---
+
 Execute the agreed plan step-by-step.
 
 ## Core Principles

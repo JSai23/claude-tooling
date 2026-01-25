@@ -47,6 +47,7 @@ Verify each item with EVIDENCE. Don't assert - prove.
 - [ ] README exists and is current
 - [ ] API endpoints documented
 - [ ] Setup instructions work
+- [ ] Documentation reflects recent changes - Compare docs to code, check for stale content (suggest `/doc` if gaps found)
 
 ## Output Format
 ```
