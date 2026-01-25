@@ -24,9 +24,3 @@ PreToolUse hook that intercepts Read for large code files and returns TLDR AST c
 
 ## Ideas
 - [ ] LSP integration for better code intelligence
-
-## Frustrations to Fix
-- [ ] ...
-
-## Experiments
-- [ ] ...
