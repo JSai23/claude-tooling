@@ -20,9 +20,13 @@ for f in "$TOOLING_DIR/agents/"*.md; do ln -sf "$f" "$CLAUDE_DIR/agents/"; done
 for f in "$TOOLING_DIR/rules/"*.md; do ln -sf "$f" "$CLAUDE_DIR/rules/"; done
 echo "Linked $(ls "$TOOLING_DIR/agents/"*.md 2>/dev/null | wc -l) agents"
 
-# Install status line hook
-cp "$TOOLING_DIR/hooks/statusline.py" "$CLAUDE_DIR/hooks/"
-chmod +x "$CLAUDE_DIR/hooks/statusline.py"
+# Install hooks
+for hook in "$TOOLING_DIR/hooks/"*.py; do
+    cp "$hook" "$CLAUDE_DIR/hooks/"
+    chmod +x "$CLAUDE_DIR/hooks/$(basename $hook)"
+done
+echo "Installed $(ls "$TOOLING_DIR/hooks/"*.py 2>/dev/null | wc -l) hooks"
+
 
 # Update settings.json with statusLine config
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"
@@ -46,7 +50,7 @@ echo ""
 echo "Installation complete!"
 echo ""
 echo "Skills: /1-plan through /0-fix, /create-handoff, /resume-handoff, /tldr-code, /doc, /auto-add-*"
-echo "Agents: planner, auditor, validator, automation-designer"
+echo "Agents: auditor, validator, automation-designer"
 echo ""
 echo "Post-install (optional):"
 echo "  1. LSP binaries:  sudo npm install -g pyright typescript-language-server"

@@ -1,9 +1,8 @@
 ---
 name: 1-plan
 description: Research and planning before implementation
+argument-hint: "{planname} [--sub name]"
 disable-model-invocation: true
-context: fork
-agent: planner
 ---
 ## Git Context
 - Branch: !`git branch --show-current 2>/dev/null || echo "not a git repo"`
@@ -20,7 +19,15 @@ $ARGUMENTS
 
 Use plan mode. Research the problem space before proposing solutions.
 
-## Planning Requirements:
+## Argument Parsing
+Parse $ARGUMENTS:
+- `{planname}` alone: Create a master plan for the project
+- `{planname} --sub {name}`: Create a targeted sub-plan (one verifiable, testable component)
+- Empty: Show existing plans and ask what to plan
+
+The user decides whether this is a master plan or a sub-plan. Do not create sub-plans inside a master plan or vice versa. Each invocation produces exactly one plan document.
+
+## Planning Requirements
 
 ### 1. Clarify Goals
 - What exactly needs to be built?
@@ -28,11 +35,15 @@ Use plan mode. Research the problem space before proposing solutions.
 - What are the acceptance criteria?
 
 ### 2. Present Approaches (2-3 options)
-For each approach:
-- What it offers (benefits)
-- What it costs (tradeoffs)
-- How to mitigate downsides
+For each major decision:
+- State the decision clearly
+- Present 2-3 realistic approaches
+- For each approach:
+  - What it offers (benefits)
+  - What it costs (tradeoffs)
+  - How to mitigate downsides
 - Your recommendation with rationale
+- Unknowns and risks
 
 ### 3. Design Before Code
 - **Diagrams first**: ASCII flowcharts, sequence diagrams
@@ -44,9 +55,5 @@ For each approach:
 - What could go wrong?
 - What unknowns remain?
 - What dependencies might change?
-
-## Output
-Save plan to: `plans/YYYYMMDD_<short-description>.md`
-(Example: `plans/20260124_add-auth.md`)
 
 Ask clarifying questions rather than assuming. Do not simplify or stub.

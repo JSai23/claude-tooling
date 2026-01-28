@@ -23,7 +23,7 @@ A SKILL.md file with instructions that Claude adds to its toolkit.
 
 ## Dynamic Injection
 - `$ARGUMENTS` - User input after skill name
-- `!`command`` - Shell command runs before Claude sees skill (preprocessing)
+- `!` + backtick + `command` + backtick - Shell command runs before Claude sees skill (preprocessing)
 
 ## File Location
 - User: `~/.claude/skills/<name>/SKILL.md`

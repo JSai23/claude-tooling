@@ -13,14 +13,6 @@ Remove AI-generated cruft from the codebase.
 
 ## What is Slop?
 
-### Comments
-- Obvious comments (`// increment i`)
-- Comments that repeat the code
-- Outdated comments that don't match code
-- Overly verbose docstrings on simple functions
-- Any comments with emojis are non text
-- Comments that state things that logically if the code were better written would be obvious
-
 ### Defensive Code
 - Try/catch around code that can't fail
 - Null checks on values that are never null
@@ -37,6 +29,14 @@ Remove AI-generated cruft from the codebase.
 - Multiple lines that could be one
 - Intermediate variables that add nothing
 - Repeated code that could be a loop
+
+### Comments
+- Obvious comments (`// increment i`)
+- Comments that repeat the code
+- Outdated comments that don't match code
+- Overly verbose docstrings on simple functions
+- Any comments with emojis or non-text decoration
+- Comments that state things that logically if the code were better written would be obvious
 
 ## Process
 1. Scan for slop patterns
