@@ -1,14 +1,15 @@
 {
-  "hooks": [
-    {
-      "event": "PreToolUse",
-      "matcher": {
-        "tool_name": "Bash"
-      },
-      "hook": {
-        "type": "command",
-        "command": "python3 $(dirname \"$0\")/block-pip.py"
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/block-pip.py"
+          }
+        ]
       }
-    }
-  ]
+    ]
+  }
 }
