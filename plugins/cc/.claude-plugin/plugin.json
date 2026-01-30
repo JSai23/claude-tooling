@@ -1,0 +1,5 @@
+{
+  "name": "cc",
+  "description": "Claude Code automation builder: create skills, agents, hooks, rules",
+  "version": "1.0.0"
+}

@@ -1,0 +1,14 @@
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": {
+        "tool_name": "Bash"
+      },
+      "hook": {
+        "type": "command",
+        "command": "python3 $(dirname \"$0\")/block-pip.py"
+      }
+    }
+  ]
+}

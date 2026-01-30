@@ -1,0 +1,21 @@
+{
+  "name": "claude-tooling",
+  "owner": { "name": "jsai" },
+  "plugins": [
+    {
+      "name": "wf",
+      "source": "./plugins/wf",
+      "description": "Agentic workflow: plan \u2192 implement \u2192 align \u2192 quality \u2192 test \u2192 review \u2192 fix"
+    },
+    {
+      "name": "cc",
+      "source": "./plugins/cc",
+      "description": "Claude Code automation builder: create skills, agents, hooks, rules"
+    },
+    {
+      "name": "util",
+      "source": "./plugins/util",
+      "description": "Utility skills: documentation, context, handoffs"
+    }
+  ]
+}
