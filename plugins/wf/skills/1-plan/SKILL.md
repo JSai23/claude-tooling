@@ -2,13 +2,7 @@
 name: 1-plan
 description: Research and planning before implementation
 argument-hint: "{planname} [--sub name]"
-disable-model-invocation: true
 ---
-## Git Context
-- Branch: !`git branch --show-current 2>/dev/null || echo "not a git repo"`
-- Recent commits: !`git log --oneline -5 2>/dev/null || echo "no commits"`
-- Changed files: !`git status --short 2>/dev/null || echo ""`
-
 ## Task
 $ARGUMENTS
 

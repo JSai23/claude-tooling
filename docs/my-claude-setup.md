@@ -1,77 +1,48 @@
 # My Claude Code Setup
 
-Personal Claude Code configuration and plugins.
-
----
-
 ## Plugins
 
-### Personal (claude-tooling)
+| Plugin | Source | Skills/Purpose |
+|--------|--------|----------------|
+| **wf** | claude-tooling | `/wf:1-plan` → `/wf:2-implement` → `/wf:3-align` → `/wf:4-quality` → `/wf:5-test` → `/wf:6-larp` → `/wf:7.1-deslop` → `/wf:8-review` → `/wf:0-fix` |
+| **util** | claude-tooling | `/util:ask`, `/util:doc`, `/util:create-handoff`, `/util:resume-handoff`, `/util:tldr` |
+| **plugin-dev** | claude-plugins-official | `/skill`, `/hook`, `/command` |
+| **pyright-lsp** | claude-plugins-official | Python LSP |
+| **typescript-lsp** | claude-plugins-official | TypeScript LSP |
+| **rust-analyzer-lsp** | claude-plugins-official | Rust LSP |
 
-| Plugin | Description | Skills |
-|--------|-------------|--------|
-| **wf** | Agentic workflow | `/wf:1-plan`, `/wf:2-implement`, `/wf:3-align`, `/wf:4-quality`, `/wf:5-test`, `/wf:6-larp`, `/wf:7.1-deslop`, `/wf:7.2-quality`, `/wf:8-review`, `/wf:0-fix` |
-| **cc** | Automation builder | `/cc:skill`, `/cc:agent`, `/cc:hook`, `/cc:rule` |
-| **util** | Utilities | `/util:ask`, `/util:doc`, `/util:create-handoff`, `/util:resume-handoff`, `/util:tldr`, `/util:rust-quality` |
+## MCP Servers
 
-### Third-Party
-
-| Plugin | Source | Purpose |
-|--------|--------|---------|
-| **claude-mem** | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Session memory - captures what Claude does, compresses it, injects context into future sessions |
-
-### Official (claude-plugins-official)
-
-| Plugin | Purpose |
+| Server | Purpose |
 |--------|---------|
-| **pyright-lsp** | Python language server |
-| **typescript-lsp** | TypeScript language server |
-| **rust-analyzer-lsp** | Rust language server |
+| **docs-mcp-server** | Documentation scraping/search ([arabold/docs-mcp-server](https://github.com/arabold/docs-mcp-server)) |
 
----
-
-## User Config
+## Config Files
 
 | File | Purpose |
 |------|---------|
-| `~/.claude/CLAUDE.md` | Coding discipline rules (scope management, simplicity, pushback) |
-| `~/.claude/hooks/statusline.py` | Shows model + context % in status line |
-| `~/.claude/settings.json` | StatusLine config |
+| `~/.claude.json` | MCP servers, conversation history |
+| `~/.claude/CLAUDE.md` | Global coding rules |
+| `~/.claude/settings.json` | StatusLine, plugins |
 
----
-
-## Install Commands
+## Install
 
 ```bash
-# Install claude-tooling (wf, cc, util)
-git clone https://github.com/jsai/claude-tooling.git
-cd claude-tooling && ./install.sh
+# claude-tooling (wf, util) + plugin-dev
+git clone https://github.com/jsai/claude-tooling.git && cd claude-tooling && ./install.sh
 
-# Install claude-mem
-claude plugin marketplace add thedotmack/claude-mem
-claude plugin install claude-mem
+# LSP plugins
+claude plugin install pyright-lsp@claude-plugins-official
+claude plugin install typescript-lsp@claude-plugins-official
+claude plugin install rust-analyzer-lsp@claude-plugins-official
 
-# Install LSP plugins
-claude plugin marketplace add anthropics/claude-plugins-official
-claude plugin install pyright-lsp
-claude plugin install typescript-lsp
-claude plugin install rust-analyzer-lsp
+# docs-mcp-server (Docker)
+docker run -d --name docs-mcp-server \
+  -v docs-mcp-data:/data -v docs-mcp-config:/config \
+  -e OPENAI_API_KEY="${OPENAI_API_KEY}" \
+  -p 6280:6280 ghcr.io/arabold/docs-mcp-server:latest \
+  --protocol http --host 0.0.0.0 --port 6280
+
+# Register MCP server
+claude mcp add --transport sse docs-mcp-server --scope user http://localhost:6280/sse
 ```
-
----
-
-## Workflow
-
-```
-/wf:1-plan → /wf:2-implement → /wf:3-align → /wf:4-quality
-                                                    ↓
-/wf:0-fix ← /wf:8-review ← /wf:7-deslop ← /wf:5-test + /wf:6-larp
-```
-
----
-
-## Links
-
-- [claude-tooling](https://github.com/jsai/claude-tooling) - This repo
-- [claude-mem](https://github.com/thedotmack/claude-mem) - Session memory
-- [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) - Official LSP plugins

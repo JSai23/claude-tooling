@@ -2,11 +2,7 @@
 name: 2-implement
 description: Execute the plan and continue where you left off
 argument-hint: "{planname}[/NN] [focus or step]"
-disable-model-invocation: true
 ---
-## Existing Plans & Progress
-!`for d in plans/*/; do [ -d "$d" ] && echo "=== $(basename $d) ===" && grep -rE "^\s*-\s*\[" "$d" 2>/dev/null | head -5; done 2>/dev/null || echo "No plans yet - run /1-plan first"`
-
 ## Focus
 $ARGUMENTS
 

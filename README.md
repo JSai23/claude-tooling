@@ -147,13 +147,13 @@ Plans get saved. Progress gets tracked. Deviations get flagged.
 </td>
 <td width="33%" valign="top">
 
-### 🔧 cc
+### 🔧 plugin-dev
 **Build Extensions**
 
 Create your own Claude Code tools:
 
 ```
-/cc:skill
+/skill
 "I want a /deploy command"
      ↓
 Walks you through design
@@ -163,7 +163,9 @@ Creates the files
 Installed and working
 ```
 
-Also: `/cc:agent`, `/cc:hook`, `/cc:rule`
+Also: `/hook`, `/command`
+
+*(from claude-plugins-official)*
 
 </td>
 <td width="33%" valign="top">

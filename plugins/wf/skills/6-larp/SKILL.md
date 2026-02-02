@@ -1,16 +1,9 @@
 ---
 name: 6-larp
 description: LARP Assessment - find fake/performative code
-disable-model-invocation: true
 context: fork
 agent: larp-detector
 ---
-## Files Changed Recently
-!`git diff --name-only HEAD~10 2>/dev/null | head -30`
-
-## Code Structure
-!`tldr structure . 2>/dev/null | head -50 || echo "tldr not available"`
-
 ## Audit Task
 $ARGUMENTS
 

@@ -1,13 +1,7 @@
 ---
 name: create-handoff
 description: Create session handoff document for transferring work to another session
-disable-model-invocation: true
 ---
-## Git Context
-- Branch: !`git branch --show-current 2>/dev/null || echo "not a git repo"`
-- Recent commits: !`git log --oneline -10 2>/dev/null || echo "no commits"`
-- Changed files: !`git status --short 2>/dev/null || echo ""`
-
 ## Session ID
 ${CLAUDE_SESSION_ID}
 

@@ -1,15 +1,6 @@
 ---
 name: resume-handoff
 description: Resume work from a previous handoff document
-disable-model-invocation: true
----
-## Latest Handoff
-!`ls -t .handoffs/*.yaml 2>/dev/null | head -1 | xargs cat 2>/dev/null || echo "No handoffs found in .handoffs/"`
-
-## Git Since Handoff
-!`git log --oneline -5 2>/dev/null || echo "no commits"`
-!`git status --short 2>/dev/null || echo ""`
-
 ---
 Input Handoff:
 If this is populated use this handoff file if this is empty use the autosuggested handoff file

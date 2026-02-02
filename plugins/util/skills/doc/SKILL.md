@@ -2,18 +2,11 @@
 name: doc
 description: Generate or update project documentation
 argument-hint: "[type: api|howto|arch]"
-disable-model-invocation: true
 context: fork
 agent: doc-writer
 ---
 ## Documentation Type
 $ARGUMENTS
-
-## Existing Docs
-!`find . -name "*.md" -path "*/docs/*" -o -name "README.md" -o -name "ARCHITECTURE.md" 2>/dev/null | head -20`
-
-## Project Structure
-!`tldr structure . 2>/dev/null | head -40 || ls -la`
 
 ---
 

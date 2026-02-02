@@ -2,18 +2,11 @@
 name: ask
 description: Ask questions about design, architecture, or how code fits together
 argument-hint: "{question}"
-disable-model-invocation: true
 context: fork
 agent: context-advisor
 ---
 ## Question
 $ARGUMENTS
-
-## Available Plans
-!`ls -la plans/*/*.md 2>/dev/null | head -20 || echo "No plans"`
-
-## Available Docs
-!`find . -name "*.md" -path "*/docs/*" -o -name "README.md" -o -name "ARCHITECTURE.md" -o -name "DESIGN.md" 2>/dev/null | head -20`
 
 ---
 

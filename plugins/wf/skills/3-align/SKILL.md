@@ -2,11 +2,7 @@
 name: 3-align
 description: Verify understanding alignment - detailed questions about implementation
 argument-hint: "[files or area]"
-disable-model-invocation: true
 ---
-## Recently Changed Files
-!`git diff --name-only HEAD~5 2>/dev/null | head -20 || echo "No recent changes"`
-
 ## Target
 $ARGUMENTS
 

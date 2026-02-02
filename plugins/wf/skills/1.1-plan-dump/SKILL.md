@@ -2,11 +2,7 @@
 name: 1.1-plan-dump
 description: Dump plan from plan mode to disk
 argument-hint: "{planname} [--sub name]"
-disable-model-invocation: true
 ---
-## Current Plans
-!`ls -la plans/*/*.md 2>/dev/null || echo "No plans yet"`
-
 ## Arguments
 $ARGUMENTS
 

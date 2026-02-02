@@ -2,15 +2,9 @@
 name: rust-quality
 description: Rust code quality audit based on Apollo best practices
 argument-hint: "[path or files]"
-disable-model-invocation: true
 ---
 ## Target
 $ARGUMENTS
-
-## Clippy Output
-```
-!`cargo clippy --all-targets --all-features 2>&1 | head -100 || echo "clippy failed or not available"`
-```
 
 ---
 

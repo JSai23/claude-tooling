@@ -2,16 +2,9 @@
 name: 4-quality
 description: Code design quality - architecture and structure review
 argument-hint: "[files or dirs]"
-disable-model-invocation: true
 context: fork
 agent: design-auditor
 ---
-## Code Structure
-!`tldr structure . 2>/dev/null | head -80 || echo "tldr not available"`
-
-## Module Layout
-!`tldr arch . 2>/dev/null | head -40 || echo ""`
-
 ## Target
 $ARGUMENTS
 

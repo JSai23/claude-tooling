@@ -10,10 +10,12 @@ echo "Installing claude-tooling..."
 claude plugin marketplace remove claude-tooling 2>/dev/null || true
 claude plugin marketplace add "$TOOLING_DIR"
 
-# Install all plugins
+# Install claude-tooling plugins
 claude plugin install wf --scope user
-claude plugin install cc --scope user
 claude plugin install util --scope user
+
+# Install plugin-dev from official marketplace (for creating skills, agents, hooks)
+claude plugin install plugin-dev@claude-plugins-official --scope user
 
 # Create skill symlinks for autocomplete
 # Workaround: marketplace plugin skills don't appear in autocomplete
@@ -25,12 +27,6 @@ mkdir -p "$CLAUDE_DIR/skills"
 for skill in "$CACHE_DIR/wf/1.0.0/skills/"*/; do
     name=$(basename "$skill")
     ln -sf "$skill" "$CLAUDE_DIR/skills/wf:$name"
-done
-
-# Link cc skills
-for skill in "$CACHE_DIR/cc/1.0.0/skills/"*/; do
-    name=$(basename "$skill")
-    ln -sf "$skill" "$CLAUDE_DIR/skills/cc:$name"
 done
 
 # Link util skills
@@ -46,7 +42,7 @@ echo ""
 echo "Installation complete!"
 echo ""
 echo "Workflow:    /wf:1-plan, /wf:2-implement, /wf:3-align, etc."
-echo "Automation:  /cc:skill, /cc:agent, /cc:hook, /cc:rule"
 echo "Utilities:   /util:ask, /util:doc, /util:create-handoff, etc."
+echo "Plugin Dev:  /skill, /hook, /command (from plugin-dev@claude-plugins-official)"
 echo ""
-echo "To update: claude plugin update wf cc util --scope user"
+echo "To update: claude plugin update wf util --scope user"

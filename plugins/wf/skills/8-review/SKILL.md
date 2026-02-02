@@ -1,18 +1,7 @@
 ---
 name: 8-review
 description: Final review - high-level alignment and production readiness
-disable-model-invocation: true
 ---
-## Git Context
-- Branch: !`git branch --show-current 2>/dev/null`
-- Uncommitted changes: !`git status --short 2>/dev/null`
-
-## Recent Changes
-!`git log --oneline -10 2>/dev/null`
-
-## Files Changed
-!`git diff main...HEAD --name-only 2>/dev/null | head -30 || git diff HEAD~10 --name-only | head -30`
-
 ## Review Target
 $ARGUMENTS
 
