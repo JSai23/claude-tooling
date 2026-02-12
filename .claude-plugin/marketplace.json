@@ -11,6 +11,11 @@
       "name": "util",
       "source": "./plugins/util",
       "description": "Utility skills: documentation, context, handoffs"
+    },
+    {
+      "name": "vault",
+      "source": "./plugins/vault",
+      "description": "Obsidian vault management: PARA filing, semantic search, backlinks, tags, inbox processing"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
   "name": "wf",
-  "description": "Agentic workflow: plan \u2192 implement \u2192 align \u2192 quality \u2192 test \u2192 review \u2192 fix",
-  "version": "1.0.0"
+  "description": "Document-driven development workflow: plan → build → verify → garden",
+  "version": "2.0.0"
 }
