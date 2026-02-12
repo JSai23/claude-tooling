@@ -1,5 +1,5 @@
 ---
-name: production-reviewer
+name: verify-production-reviewer
 description: >
   Verifies production readiness — tests pass, no secrets, error handling,
   no TODOs, dependencies pinned. Runs actual checks, shows evidence.

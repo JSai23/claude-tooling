@@ -1,5 +1,5 @@
 ---
-name: design-auditor
+name: verify-design-auditor
 description: >
   Reviews code architecture — coupling, abstractions, dependency direction,
   module boundaries. Questions design without fixing.

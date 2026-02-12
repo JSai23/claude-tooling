@@ -1,5 +1,5 @@
 ---
-name: larp-detector
+name: verify-larp-detector
 description: >
   Hunts for fake/performative code — stubs, hardcoded values, validation that
   always passes, test theater. Exposes code that lies.

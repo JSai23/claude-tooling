@@ -1,5 +1,5 @@
 ---
-name: code-cleaner
+name: verify-code-cleaner
 description: >
   Removes AI-generated slop and improves code quality — unnecessary defensive code,
   over-engineering, unclear naming, dead paths. Fixes as it goes.

@@ -29,15 +29,15 @@ Read the design doc and the implementation. Understand what was intended and wha
 
 ### 2. Delegate Specialized Verification
 
-You have four specialized subagents. Use them to run parallel verification passes:
+You have four specialized subagents. Spawn them by name using the Task tool:
 
-**Design Auditor** — Questions architectural decisions in hindsight. Now that the code exists, does the structure make sense? Are the abstractions earning their complexity? Are dependencies pointing the right direction? Are module boundaries in the right places?
+**`verify-design-auditor`** — Questions architectural decisions in hindsight. Now that the code exists, does the structure make sense? Are the abstractions earning their complexity? Are dependencies pointing the right direction? Are module boundaries in the right places?
 
-**LARP Detector** — Hunts for fake or performative code. Stubs returning hardcoded values, validation that always passes, error handling that swallows, tests that assert nothing, async without await. Code that looks correct but lies.
+**`verify-larp-detector`** — Hunts for fake or performative code. Stubs returning hardcoded values, validation that always passes, error handling that swallows, tests that assert nothing, async without await. Code that looks correct but lies.
 
-**Code Cleaner** — Finds AI-generated slop and code quality issues. Unnecessary defensive code, over-engineering, unclear naming, dead code, functions doing too much, complex conditionals that could be simplified.
+**`verify-code-cleaner`** — Finds AI-generated slop and code quality issues. Unnecessary defensive code, over-engineering, unclear naming, dead code, functions doing too much, complex conditionals that could be simplified.
 
-**Production Reviewer** — Verifies production readiness. Tests pass (actually runs them), no hardcoded secrets, errors handled appropriately, no TODOs or loose ends, dependencies pinned.
+**`verify-production-reviewer`** — Verifies production readiness. Tests pass (actually runs them), no hardcoded secrets, errors handled appropriately, no TODOs or loose ends, dependencies pinned.
 
 ### 3. Hindsight Design Review
 
