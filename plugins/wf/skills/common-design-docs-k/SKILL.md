@@ -29,6 +29,8 @@ Dependency graphs
 
 Use prose only to explain *why* — relationships, rationale, tradeoffs. Use visuals to show *what* and *how*.
 
+**Watch doc size.** When a single doc exceeds ~1000 lines, it's a sign it should be split. Monolithic specs that grow to thousands of lines exceed agent read limits and mix concerns that belong in separate files. Split by logical boundary — per-block plans, per-component living docs, per-concern sections into their own files.
+
 **Code in plans — minimize.**
 - Design plans: **no code snippets.** Describe interfaces, contracts, data shapes — not implementation.
 - Implementation plans: code is expected but surgical. Show signatures, key types, critical algorithms. Not full implementations.
@@ -57,6 +59,8 @@ There are two kinds of plans:
 Small features may combine both in one document. Larger efforts separate them — a design plan at a higher level, implementation plans nested beneath for each buildable piece.
 
 Plans live centralized at `design-docs/plans/`. Plans can nest — a parent plan defines vision and ordering, child plans are independently buildable. Sibling plans are parallel efforts (different services, different components). Nested plans are phases of the same effort (blocks within a service).
+
+**Plans are never condensed, summarized, or rewritten.** Every diagram, rejected alternative, and reasoning chain is part of the decision trail. When reorganizing or moving plans, use `cp` — not "summarize and rewrite." An agent's instinct to tidy by condensing destroys the very context that makes plans valuable as historical records.
 
 ### Living Docs
 Describe how things work *now*. Staleness is a bug. Living docs emerge from implementation — created after building, not before.
