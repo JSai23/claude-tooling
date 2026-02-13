@@ -6,19 +6,19 @@ user-invocable: false
 
 # Build Conventions
 
-How to implement from a design doc.
+How to implement from a plan doc.
 
 ## Resumption Protocol
 
-1. Check `docs/designs/` for the active design doc
-2. Read the full design doc — purpose, approach, milestones
+1. Check `docs/plans/` for the active plan
+2. Read the full plan doc — purpose, approach, milestones
 3. Check milestone progress markers (`[x]` vs `[ ]`)
 4. Resume from the first incomplete step
 5. Tell the user where you're picking up from
 
 ## Deviation Protocol
 
-Any deviation from the design doc requires:
+Any deviation from the plan requires:
 
 1. STOP — explain what you're encountering that differs from the plan
 2. PROPOSE — how to handle it, with tradeoffs
@@ -31,7 +31,7 @@ Never silently drift from the plan.
 ## Progress Tracking
 
 After completing each milestone:
-- Mark steps as `[x]` in the design doc
+- Mark steps as `[x]` in the plan doc
 - Add timestamped entry to the Progress section
 - Record any surprises in the Surprises section
 - Record any decisions in `decisions.md`

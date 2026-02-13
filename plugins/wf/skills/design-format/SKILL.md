@@ -1,30 +1,14 @@
 ---
 name: design-format
-description: The design doc template, repo structure conventions, and catalogue format
+description: Plan document templates — design doc format, decision log format, index format
 user-invocable: false
 ---
 
-# Design Doc Format
+# Plan Document Format
 
-Design docs are first-class artifacts. They live in the repository, are updated during implementation, and are archived after completion.
+Plans are foresight artifacts. They describe bounded work with milestones, acceptance criteria, and a defined end state.
 
-## Repository Structure
-
-```
-docs/
-├── designs/
-│   ├── index.md                  # Catalogue of all designs
-│   ├── {feature-name}/
-│   │   ├── design.md             # The living design doc
-│   │   └── decisions.md          # Decision log
-│   └── completed/
-│       └── {feature-name}/       # Archived after shipping
-├── ARCHITECTURE.md               # System map (updated when system shape changes)
-├── PRINCIPLES.md                 # Golden rules (updated as team learns)
-└── QUALITY.md                    # Per-domain quality grades
-```
-
-## Design Doc Template
+## Plan Doc Template
 
 ```markdown
 # {Feature Name}
@@ -84,17 +68,17 @@ Impact: {What this changes about the plan}
 ## Index Template (index.md)
 
 ```markdown
-# Design Index
+# Plan Index
 
-| Name | Status | Date | Domain |
-|------|--------|------|--------|
-| {name} | active | YYYY-MM-DD | {domain} |
+| Name | Status | Date | Scope |
+|------|--------|------|-------|
+| {name} | active | YYYY-MM-DD | {system/package} |
 ```
 
 ## Lifecycle
 
-1. Planner creates design doc (status: draft → active)
+1. Planner creates plan doc (status: draft → active)
 2. Builder updates during implementation (progress, surprises, decisions)
-3. Verifier reviews the result
-4. Design archived to `completed/` (status: complete)
-5. Gardener checks for staleness
+3. Verifier writes verification.md alongside the plan
+4. Plan marked complete (status: complete) — becomes historical record
+5. Gardener checks for stale active plans

@@ -51,18 +51,9 @@ How to assess and score code quality across multiple dimensions.
 - Minor naming inconsistencies
 - Opportunities for simplification
 
-## Quality Scoring
+## Quality Grading
 
-Track quality per domain/area in `docs/QUALITY.md`:
-
-```markdown
-# Quality Scores
-
-| Domain | Grade | Last Reviewed | Notes |
-|--------|-------|---------------|-------|
-| auth   | B     | 2025-01-15    | Solid design, minor naming issues |
-| api    | A     | 2025-01-15    | Clean and well-tested |
-```
+Use grades to summarize quality in verification reports:
 
 Grades:
 - **A**: Clean, well-tested, good design. No critical or warning findings.

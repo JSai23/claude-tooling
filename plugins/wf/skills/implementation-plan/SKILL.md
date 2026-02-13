@@ -54,7 +54,7 @@ Steps:
 
 ## Progress Tracking
 
-The builder marks steps with `[x]` as they complete. The Progress section of the design doc gets timestamped entries:
+The builder marks steps with `[x]` as they complete. The Progress section of the plan doc gets timestamped entries:
 
 ```markdown
 ## Progress

@@ -6,54 +6,55 @@ user-invocable: false
 
 # Documentation Standards
 
-What well-maintained documentation looks like and how to keep it that way.
+What well-maintained agent docs look like and how to keep them that way.
 
 ## Core Principle
 
 From an agent's perspective, anything not in the repository doesn't exist. Stale docs are worse than no docs — they actively mislead future sessions.
 
-## Documentation Health Criteria
+## Health Criteria
 
 ### Freshness
 A doc is stale when:
 - It describes behavior the code no longer implements
 - It references files, modules, or functions that no longer exist
 - Its examples don't work
-- Its architecture diagrams don't match the current system shape
+- Its diagrams don't match the current system shape
 
 ### Completeness
-A doc is incomplete when:
-- Active designs are missing from `docs/designs/index.md`
+Agent docs are incomplete when:
+- Active plans are missing from `docs/plans/index.md`
 - `docs/ARCHITECTURE.md` doesn't cover a major system component
-- Design docs are missing decision logs for significant decisions
-- Quality scores haven't been updated after recent changes
+- Plans are missing decision logs for significant decisions
+- A component was built or significantly changed but has no living doc
 
 ### Cross-Linking
 Documents should reference each other:
-- Design docs link to the relevant architecture sections
-- Architecture map references active designs that modify it
-- Quality scores reference the verification that produced them
-- Principles reference the design decisions that inspired them
+- Plans link to relevant architecture sections
+- ARCHITECTURE.md references active plans that modify it
+- Living docs link to the plans that created them
+- Principles reference the decisions that inspired them
 
 ## What to Check
 
-### Design Index (`docs/designs/index.md`)
-- Every active design has an entry
-- No entries for designs that don't exist
-- Status field is accurate (active/complete)
+### Plan Index (`docs/plans/index.md`)
+- Every active plan has an entry
+- No entries for plans that don't exist
+- Status field is accurate (draft/active/complete)
 
 ### Architecture (`docs/ARCHITECTURE.md`)
 - Reflects actual system shape
 - Module/service names match real code
 - Dependency directions are accurate
+- Links to deeper living docs where they exist
 
-### Quality Scores (`docs/QUALITY.md`)
-- Scores reflect recent verification results
-- No domains missing that have been built
-- Last reviewed dates are reasonable
+### Living Docs
+- Describe the current system, not a past version
+- Live near what they describe (locality principle)
+- Are referenced from ARCHITECTURE.md when system-level
 
-### Active Designs
-- All milestones marked complete should be archived to `completed/`
+### Active Plans
+- Plans with all milestones complete should be marked complete
 - Progress sections should be current
 - No orphaned decision logs
 
