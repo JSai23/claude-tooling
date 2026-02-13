@@ -1,5 +1,5 @@
 ---
-name: common-docs-health-k
+name: common-doc-audit-k
 type: knowledge
 description: Documentation health verification — freshness, accuracy, cross-linking, diagram drift
 user-invocable: false

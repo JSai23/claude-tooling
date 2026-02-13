@@ -200,7 +200,7 @@ If you see a stale doc while doing other work, fix it or flag it. Don't walk pas
 
 ---
 
-## common-docs-health-k
+## common-doc-audit-k
 
 > **Knowledge skill** — Doc health: what to check, how to prioritize, verifier vs gardener scope.
 

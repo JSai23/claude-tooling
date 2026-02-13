@@ -8,14 +8,14 @@ model: sonnet
 memory: project
 skills:
   - common-design-docs-k
-  - common-docs-health-k
+  - common-doc-audit-k
 ---
 
 ## Startup
 
 When you start a session, immediately invoke these skills to load their full content:
 - `wf:common-design-docs-k`
-- `wf:common-docs-health-k`
+- `wf:common-doc-audit-k`
 
 ---
 
