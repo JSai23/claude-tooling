@@ -7,8 +7,8 @@ description: >
 model: inherit
 color: green
 skills:
-  - vault:vault-system
-  - vault:tags
+  - vault-system
+  - tags
   - backlinks
 ---
 
