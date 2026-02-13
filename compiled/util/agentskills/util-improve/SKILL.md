@@ -28,18 +28,14 @@ If $ARGUMENTS is provided, start from that. Otherwise, review the session for fr
 
 This is the critical gate. Ask: **"Would this feedback help a different project using these plugins?"**
 
-**Generic (file it):**
-- "The planner agent doesn't check for existing tests before proposing new ones"
-- "The /doc skill doesn't handle monorepos"
-- "The verifier misses import-only changes"
-- "The build agent doesn't respect workspace-level tsconfig"
+**Generic** (file it):
+- Planner doesn't check for existing tests before proposing new ones
+- /doc skill doesn't handle monorepos
+- Verifier misses import-only changes
 
-**Repo-specific (don't file it):**
-- "Our API uses a custom auth header the agent doesn't know about"
-- "We use pnpm but the agent defaults to npm" (unless it's a pattern across projects)
-- "Our test runner needs a specific flag"
-
-If feedback is repo-specific, tell the user it belongs in their project's CLAUDE.md or local config, not in the plugin. Stop here unless there's also generic feedback.
+**Repo-specific** (don't file — belongs in CLAUDE.md):
+- Custom auth headers, tool preferences (pnpm vs npm), project-specific test flags
+- Exception: if the same repo-specific issue keeps appearing across projects, it's generic
 
 ## Step 3: Distill
 
