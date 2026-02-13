@@ -6,7 +6,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        COMMON SKILLS                                │
 │                                                                     │
-│  common-design-docs          common-testing                         │
+│  common-design-docs-k        common-testing-k                       │
 │  (doc system, folder         (test philosophy,                      │
 │   structure, frontmatter,     anti-patterns,                        │
 │   agent roles, lifecycle)     coverage priorities)                  │
@@ -25,14 +25,15 @@
 │                     │  │                     │
 │  Skills:            │  │  Skills:            │
 │  ┌─────────────────┐│  │  ┌─────────────────┐│
-│  │ planner-design  ││  │  │ builder-        ││
-│  │ (product, system││  │  │  conventions    ││
+│  │ planner-design-k││  │  │ builder-        ││
+│  │ (product, system││  │  │  conventions-k  ││
 │  │  code-level     ││  │  │ (deviation,     ││
 │  │  design, trade- ││  │  │  progress,      ││
 │  │  offs)          ││  │  │  code standards,││
 │  ├─────────────────┤│  │  │  reflection)    ││
 │  │ planner-        ││  │  └─────────────────┘│
-│  │  implementation ││  │                     │
+│  │  implementation-││  │                     │
+│  │  k              ││  │                     │
 │  │ (milestones,    ││  │  Subagents: none    │
 │  │  sequencing,    ││  │                     │
 │  │  acceptance)    ││  │  Produces:          │
@@ -59,21 +60,21 @@
 │                     │  │                     │
 │  Skills:            │  │  Skills:            │
 │  ┌─────────────────┐│  │  ┌─────────────────┐│
-│  │ verify-quality  ││  │  │ gardener-       ││
-│  │ (dimensions,    ││  │  │  standards      ││
+│  │ verify-quality-a││  │  │ gardener-       ││
+│  │ (dimensions,    ││  │  │  standards-k    ││
 │  │  severity,      ││  │  │ (freshness,     ││
 │  │  grading,       ││  │  │  completeness,  ││
 │  │  prod readiness)││  │  │  cross-linking, ││
 │  ├─────────────────┤│  │  │  priorities)    ││
-│  │ verify-larp     ││  │  └─────────────────┘│
+│  │ verify-larp-a   ││  │  └─────────────────┘│
 │  │ (fake code,     ││  │                     │
 │  │  red flags)     ││  │  Produces:          │
 │  ├─────────────────┤│  │  · cleaned code     │
-│  │ verify-style    ││  │  · updated docs     │
+│  │ verify-style-a  ││  │  · updated docs     │
 │  │ (AI slop, dead  ││  │  · garden report    │
 │  │  code, naming)  ││  │                     │
 │  ├─────────────────┤│  │  Model: sonnet      │
-│  │ verify-design   ││  │                     │
+│  │ verify-design-a ││  │                     │
 │  │ (architecture   ││  └─────────────────────┘
 │  │  review)        ││
 │  └─────────────────┘│
@@ -115,8 +116,8 @@
 ## User-Invokeable Skills
 
 ```
-/wf:doc [type]             Generate or update standard code documentation (docstrings, rustdoc, API refs)
-/wf:logging [type]         Log decisions, progress, deviations, discoveries
+/wf:doc-a [type]           Generate or update standard code documentation (docstrings, rustdoc, API refs)
+/wf:logging-a [type]       Log decisions, progress, deviations, discoveries
 ```
 
 ## Design-Docs Folder Structure

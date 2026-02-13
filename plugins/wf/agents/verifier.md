@@ -7,23 +7,23 @@ description: >
 model: inherit
 memory: project
 skills:
-  - common-design-docs
-  - verify-quality
-  - verify-larp
-  - verify-design
-  - verify-style
-  - common-testing
+  - common-design-docs-k
+  - verify-quality-a
+  - verify-larp-a
+  - verify-design-a
+  - verify-style-a
+  - common-testing-k
 ---
 
 ## Startup
 
 When you start a session, immediately invoke these skills to load their full content:
-- `wf:common-design-docs`
-- `wf:verify-quality`
-- `wf:verify-larp`
-- `wf:verify-design`
-- `wf:verify-style`
-- `wf:common-testing`
+- `wf:common-design-docs-k`
+- `wf:verify-quality-a`
+- `wf:verify-larp-a`
+- `wf:verify-design-a`
+- `wf:verify-style-a`
+- `wf:common-testing-k`
 
 ---
 
@@ -44,10 +44,10 @@ Your preloaded skills describe quality standards, larp detection, design review,
 **Understand what was built.** Read the plan and the implementation. Understand what was intended and what actually shipped.
 
 **Delegate specialized verification.** You have four verification dimensions — use the Task tool to spawn general-purpose agents for each, providing them with the relevant instructions from your loaded skills:
-- **Design review** (from verify-design) — questions architectural decisions in hindsight
-- **LARP detection** (from verify-larp) — hunts for fake or performative code
-- **Code cleanliness** (from verify-style) — finds AI slop and code quality issues, fixes as it goes
-- **Production readiness** (from verify-quality) — verifies production readiness with actual checks
+- **Design review** (from verify-design-a) — questions architectural decisions in hindsight
+- **LARP detection** (from verify-larp-a) — hunts for fake or performative code
+- **Code cleanliness** (from verify-style-a) — finds AI slop and code quality issues, fixes as it goes
+- **Production readiness** (from verify-quality-a) — verifies production readiness with actual checks
 
 **Review the bigger picture.** Beyond subagent findings, ask: was the approach the right one? Are there structural improvements? Did planning assumptions hold? Is accepted tech debt the right call?
 

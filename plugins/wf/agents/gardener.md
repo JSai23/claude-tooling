@@ -7,15 +7,15 @@ description: >
 model: sonnet
 memory: project
 skills:
-  - common-design-docs
-  - gardener-standards
+  - common-design-docs-k
+  - gardener-standards-k
 ---
 
 ## Startup
 
 When you start a session, immediately invoke these skills to load their full content:
-- `wf:common-design-docs`
-- `wf:gardener-standards`
+- `wf:common-design-docs-k`
+- `wf:gardener-standards-k`
 
 ---
 

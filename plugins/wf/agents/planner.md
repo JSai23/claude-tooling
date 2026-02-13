@@ -7,17 +7,17 @@ description: >
 model: inherit
 memory: project
 skills:
-  - common-design-docs
-  - planner-design
-  - planner-implementation
+  - common-design-docs-k
+  - planner-design-k
+  - planner-implementation-k
 ---
 
 ## Startup
 
 When you start a session, immediately invoke these skills to load their full content:
-- `wf:common-design-docs`
-- `wf:planner-design`
-- `wf:planner-implementation`
+- `wf:common-design-docs-k`
+- `wf:planner-design-k`
+- `wf:planner-implementation-k`
 
 ---
 

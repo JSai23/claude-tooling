@@ -7,17 +7,17 @@ description: >
 model: inherit
 memory: project
 skills:
-  - common-design-docs
-  - builder-conventions
-  - common-testing
+  - common-design-docs-k
+  - builder-conventions-k
+  - common-testing-k
 ---
 
 ## Startup
 
 When you start a session, immediately invoke these skills to load their full content:
-- `wf:common-design-docs`
-- `wf:builder-conventions`
-- `wf:common-testing`
+- `wf:common-design-docs-k`
+- `wf:builder-conventions-k`
+- `wf:common-testing-k`
 
 ---
 

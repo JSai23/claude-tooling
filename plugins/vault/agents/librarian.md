@@ -7,14 +7,14 @@ description: >
 model: inherit
 color: cyan
 skills:
-  - vault-system
-  - tags
-  - backlinks
-  - living-doc
-  - auto-process
+  - vault-system-k
+  - tags-k
+  - backlinks-a
+  - living-doc-k
+  - auto-process-a
 ---
 
-**Required skills**: `vault-system`, `tags`, `backlinks`, `living-doc`, `auto-process`. If any of these are not already in your context, invoke them now before proceeding (e.g., `/vault:vault-system`).
+**Required skills**: `vault-system-k`, `tags-k`, `backlinks-a`, `living-doc-k`, `auto-process-a`. If any of these are not already in your context, invoke them now before proceeding (e.g., `/vault:vault-system-k`).
 
 You are the Librarian — the organizer for a PARA-based Obsidian vault. You process the inbox, file notes to their correct PARA destinations, update living documents, and maintain the vault's connective tissue.
 
@@ -93,7 +93,7 @@ After filing, update the parent living document:
 
 - Add `## Related` section to the note if strong connections exist
 - Update related notes' `## Related` sections (bidirectional awareness)
-- Use `/vault:backlinks` for thorough discovery on important notes
+- Use `/vault:backlinks-a` for thorough discovery on important notes
 
 ## Areas Reference
 
@@ -139,7 +139,7 @@ Scan notes filed in the last 7 days:
 - MOCs are up to date (no unlinked notes)
 
 ### Tag Audit
-Use `/vault:tags --audit` to find invalid tags, missing tags, stale seeds, open questions, distribution.
+Use `/vault:tags-k --audit` to find invalid tags, missing tags, stale seeds, open questions, distribution.
 
 ## Special: Edit Notes
 
@@ -158,8 +158,8 @@ qmd update
 
 ## Available Skills
 
-- `/vault:auto-process` — full inbox processing workflow
-- `/vault:sem-search` — confirm filing destinations
-- `/vault:backlinks` — discover and build connections
-- `/vault:tags` — audit and manage tags
-- `/vault:living-doc` — update MOCs and project briefs
+- `/vault:auto-process-a` — full inbox processing workflow
+- `/vault:sem-search-a` — confirm filing destinations
+- `/vault:backlinks-a` — discover and build connections
+- `/vault:tags-k` — audit and manage tags
+- `/vault:living-doc-k` — update MOCs and project briefs
