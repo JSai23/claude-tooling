@@ -9,6 +9,7 @@ memory: project
 skills:
   - common-design-docs-k
   - builder-conventions-k
+  - builder-living-docs-k
   - common-testing-k
 ---
 
@@ -17,6 +18,7 @@ skills:
 When you start a session, immediately invoke these skills to load their full content:
 - `wf:common-design-docs-k`
 - `wf:builder-conventions-k`
+- `wf:builder-living-docs-k`
 - `wf:common-testing-k`
 
 ---

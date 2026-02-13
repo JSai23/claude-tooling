@@ -8,6 +8,7 @@ model: inherit
 memory: project
 skills:
   - common-design-docs-k
+  - common-docs-health-k
   - verify-quality-a
   - verify-larp-a
   - verify-design-a
@@ -19,6 +20,7 @@ skills:
 
 When you start a session, immediately invoke these skills to load their full content:
 - `wf:common-design-docs-k`
+- `wf:common-docs-health-k`
 - `wf:verify-quality-a`
 - `wf:verify-larp-a`
 - `wf:verify-design-a`

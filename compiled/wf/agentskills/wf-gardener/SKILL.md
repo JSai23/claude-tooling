@@ -209,36 +209,55 @@ If you see a stale doc while doing other work, fix it or flag it. Don't walk pas
 
 ---
 
-## gardener-standards-k
+## common-docs-health-k
 
-> **Knowledge skill** — Documentation health criteria: freshness, completeness, cross-linking, cleanup priorities.
+> **Knowledge skill** — Doc health: what to check, how to prioritize, verifier vs gardener scope.
 
-# Documentation Standards
+# Documentation Health
 
-What well-maintained agent docs look like and how to keep them that way.
+Stale docs actively mislead. From an agent's perspective, anything not in the repo doesn't exist — and anything in the repo that's wrong is worse than nothing.
 
-## Core Principle
+## Two Scopes
 
-From an agent's perspective, anything not in the repository doesn't exist. Stale docs actively mislead future sessions.
+**Verifier** — runs post-build as part of the main loop. Checks: did the builder do its doc duty? Do living docs match what was just built? Are diagrams current? Is ARCHITECTURE.md updated?
 
-## Health Criteria
+**Gardener** — runs anytime, broader scope. Checks: does the entire `design-docs/` tree accurately represent the system? Have things drifted since last audit? Are there orphans, broken links, stale plans?
 
-**Freshness** — stale when: describes behavior code no longer implements, references files that don't exist, examples don't work, diagrams don't match reality.
-
-**Completeness** — incomplete when: active plans missing from index, ARCHITECTURE.md doesn't cover major components, plans missing decision logs, components built without living docs.
-
-**Cross-linking** — plans link to architecture, ARCHITECTURE.md references active plans, living docs link to the plans that created them, principles reference inspiring decisions.
+Same checklist, different aperture.
 
 ## What to Check
 
-- Plan index: every active plan has an entry, no phantom entries, accurate statuses
-- ARCHITECTURE.md: reflects actual system, module names match code, dependency directions accurate
-- Living docs: describe current system, live near what they describe, referenced from ARCHITECTURE.md
-- Active plans: completed ones should be marked complete, progress sections current
+```
+Check                        │ What "wrong" looks like
+─────────────────────────────┼──────────────────────────────────────
+Diagram accuracy             │ Class diagram missing new fields/methods
+                             │ Data flow doesn't match actual flow
+                             │ Component diagram has removed modules
+─────────────────────────────┼──────────────────────────────────────
+ARCHITECTURE.md              │ Doesn't cover new components
+                             │ Module names don't match code
+                             │ Dependency directions wrong
+─────────────────────────────┼──────────────────────────────────────
+Living doc freshness         │ Describes old behavior
+                             │ References files that don't exist
+                             │ Examples don't work
+─────────────────────────────┼──────────────────────────────────────
+Plan status                  │ Completed plans still marked active
+                             │ Progress sections not updated
+                             │ Missing decision logs
+─────────────────────────────┼──────────────────────────────────────
+Cross-links                  │ Plans don't link to architecture
+                             │ Living docs not in ARCHITECTURE.md
+                             │ Plans missing from index
+─────────────────────────────┼──────────────────────────────────────
+Coverage                     │ Components built without living docs
+                             │ Major modules undocumented
+                             │ New APIs without integration docs
+```
 
-## Cleanup Priority
+## Priority
 
-1. Things that mislead future agent sessions (highest)
-2. Things that have drifted enough to cause confusion
-3. Quick wins (stale entries, dead links)
-4. Cosmetic improvements (lowest)
+1. **Actively misleading** — docs that will cause the next agent to make wrong decisions
+2. **Drifted** — docs that are stale enough to confuse but not dangerously wrong
+3. **Missing** — gaps where docs should exist but don't
+4. **Cosmetic** — formatting, naming, minor cross-link fixes
