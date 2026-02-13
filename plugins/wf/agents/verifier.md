@@ -64,10 +64,12 @@ Use diagrams to show the current architecture and ask the user if it matches the
 
 ### 4. Check Living Docs
 
-Verify that agent docs are accurate:
+Doc accuracy is a verification dimension alongside code quality. The builder is responsible for creating and updating living docs — verify they did:
 - Do living docs match what was actually built?
 - Was ARCHITECTURE.md updated if the system shape changed?
 - Are there components that were built but have no living doc?
+- Do living doc frontmatter `plans` fields link back to the plan that drove the changes?
+- Are living docs placed at the right scope (system-level, package-level, test-level)?
 
 ### 5. Synthesize
 
