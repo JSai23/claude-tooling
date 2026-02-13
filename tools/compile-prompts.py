@@ -1,40 +1,36 @@
-#!/usr/bin/env python3
-"""Compile agent prompts from plugin agents + knowledge skills into flat files.
+#!/usr/bin/env -S uv run
+# /// script
+# requires-python = ">=3.10"
+# ///
+"""Compile Claude plugin agents + skills into portable prompt formats.
 
-Reads agent definitions, resolves their skill references, and produces:
-1. Flat system prompts — one .md per agent with knowledge skills inlined
-2. AgentSkills.io compatible directories — compiled agents as publishable skills
-
-Only skills with `type: knowledge` are compiled into flat prompts.
-Action skills remain load-on-demand.
+Reads agent definitions, resolves knowledge skill references, and produces:
+1. Flat system prompts — one .md per agent (agent body + inlined knowledge skills)
+2. AgentSkills.io directories — agents and standalone skills as publishable skills
 
 Usage:
-    python3 tools/compile-prompts.py plugins/wf
-    python3 tools/compile-prompts.py plugins/vault
-    python3 tools/compile-prompts.py plugins/wf --out build/wf
+    uv run tools/compile-prompts.py              # compile all plugins
+    uv run tools/compile-prompts.py wf           # compile one plugin
+    uv run tools/compile-prompts.py wf planner   # compile one agent
 """
 
 import re
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent.parent
+PLUGINS_DIR = ROOT / "plugins"
+COMPILED_DIR = ROOT / "compiled"
 LINE_LIMIT = 500
 
 
 def parse_frontmatter(text):
-    """Parse YAML frontmatter from markdown. Returns (dict, body_string).
-
-    Handles: simple key: value, multiline > strings, and - item lists.
-    No external dependencies.
-    """
+    """Parse YAML frontmatter. Returns (dict, body_string)."""
     m = re.match(r"^---\n(.*?)\n---\n?(.*)", text, re.DOTALL)
     if not m:
         return {}, text
-
-    fm_text = m.group(1)
-    body = m.group(2).lstrip("\n")
+    fm_text, body = m.group(1), m.group(2).lstrip("\n")
     fm = {}
-
     lines = fm_text.split("\n")
     i = 0
     while i < len(lines):
@@ -42,21 +38,15 @@ def parse_frontmatter(text):
         kv = re.match(r"^([\w][\w-]*):\s*(.*)", line)
         if kv:
             key, val = kv.group(1), kv.group(2).strip()
-
             if val == ">":
-                # Multiline folded string
                 parts = []
                 i += 1
-                while i < len(lines) and (
-                    lines[i].startswith("  ") or lines[i].strip() == ""
-                ):
+                while i < len(lines) and (lines[i].startswith("  ") or lines[i].strip() == ""):
                     parts.append(lines[i].strip())
                     i += 1
                 fm[key] = " ".join(p for p in parts if p)
                 continue
-
             elif val == "" or val.startswith("["):
-                # Possibly a list
                 items = []
                 i += 1
                 while i < len(lines) and re.match(r"^\s+-\s+", lines[i]):
@@ -68,27 +58,28 @@ def parse_frontmatter(text):
                 elif val:
                     fm[key] = val
                 continue
-
             else:
                 fm[key] = val
         i += 1
-
     return fm, body
 
 
 def strip_startup(body):
-    """Remove ## Startup section from agent body (skills are inlined)."""
+    """Remove ## Startup section (skills are inlined instead)."""
     return re.sub(r"## Startup\n.*?---\n*", "", body, flags=re.DOTALL)
 
 
-def compile_agent(agent_path, skills_dir):
-    """Compile one agent with its knowledge skills into a flat prompt.
+def line_count(text):
+    return text.strip().count("\n") + 1
 
-    Returns (compiled_text, agent_name, knowledge_skills, action_skills).
+
+def compile_agent(agent_path, skills_dir):
+    """Compile agent + knowledge skills into flat prompt.
+
+    Returns (compiled_text, name, description, knowledge_skills, action_skills).
     """
     text = agent_path.read_text()
     fm, body = parse_frontmatter(text)
-
     name = fm.get("name", agent_path.stem)
     desc = fm.get("description", "")
     skills = fm.get("skills", [])
@@ -96,23 +87,16 @@ def compile_agent(agent_path, skills_dir):
         skills = [skills]
 
     body = strip_startup(body)
-
-    # Build compiled prompt
-    parts = []
-    parts.append(body.strip())
-
-    k_skills = []
-    a_skills = []
+    parts = [body.strip()]
+    k_skills, a_skills = [], []
 
     for skill_name in skills:
         skill_path = skills_dir / skill_name / "SKILL.md"
         if not skill_path.exists():
             parts.append(f"\n\n---\n\n<!-- MISSING: {skill_name} -->")
             continue
-
         sfm, sbody = parse_frontmatter(skill_path.read_text())
         skill_type = sfm.get("type", "knowledge")
-
         if skill_type in ("knowledge", "both"):
             k_skills.append(skill_name)
             parts.append(f"\n\n---\n\n## {sfm.get('name', skill_name)}\n\n{sbody.strip()}")
@@ -124,107 +108,123 @@ def compile_agent(agent_path, skills_dir):
 
 
 def write_flat(compiled, name, out_dir):
-    """Write flat system prompt .md file."""
-    path = out_dir / f"{name}.md"
+    """Write flat .md system prompt for agent sessions."""
+    agents_dir = out_dir / "agents"
+    agents_dir.mkdir(parents=True, exist_ok=True)
+    path = agents_dir / f"{name}.md"
     path.write_text(compiled + "\n")
     return path
 
 
-def write_agentskill(compiled, name, desc, plugin_name, out_dir):
-    """Write AgentSkills.io compatible skill directory."""
+def write_agentskill(compiled, name, desc, plugin_name, out_dir, *, source_type="agent"):
+    """Write AgentSkills.io directory."""
     skill_name = f"{plugin_name}-{name}"
     skill_dir = out_dir / "agentskills" / skill_name
     skill_dir.mkdir(parents=True, exist_ok=True)
-
+    source_key = "source-agent" if source_type == "agent" else "source-skill"
     content = f"""---
 name: {skill_name}
 description: >
   {desc}
 metadata:
   source-plugin: {plugin_name}
-  source-agent: {name}
-  compiled: "true"
+  {source_key}: {name}
 ---
 
-{compiled}
+{compiled.strip()}
 """
     (skill_dir / "SKILL.md").write_text(content)
     return skill_dir
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: compile-prompts.py <plugin-dir> [--out <output-dir>]")
-        print()
-        print("Examples:")
-        print("  python3 tools/compile-prompts.py plugins/wf")
-        print("  python3 tools/compile-prompts.py plugins/vault --out build/vault")
-        sys.exit(1)
-
-    plugin_dir = Path(sys.argv[1])
-    out_dir = plugin_dir / "compiled"
-    if "--out" in sys.argv:
-        idx = sys.argv.index("--out")
-        if idx + 1 < len(sys.argv):
-            out_dir = Path(sys.argv[idx + 1])
-
+def compile_plugin(plugin_dir, out_dir, target_agent=None):
+    """Compile all agents and standalone skills for a plugin."""
     agents_dir = plugin_dir / "agents"
     skills_dir = plugin_dir / "skills"
+    plugin_name = plugin_dir.name
 
     if not agents_dir.exists():
-        print(f"Error: no agents/ directory in {plugin_dir}")
-        sys.exit(1)
+        print(f"  {plugin_name}: no agents/ directory, skipping")
+        return True
 
-    plugin_name = plugin_dir.name
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"Compiling {plugin_name} agents...")
-    print(f"  Agents:  {agents_dir}")
-    print(f"  Skills:  {skills_dir}")
-    print(f"  Output:  {out_dir}")
-    print()
+    print(f"\n  {plugin_name}")
+    print(f"  {'-' * 40}")
 
     issues = []
-    total_agents = 0
+    agent_files = sorted(agents_dir.glob("*.md"))
 
-    for agent_file in sorted(agents_dir.glob("*.md")):
-        compiled, name, desc, k_skills, a_skills = compile_agent(
-            agent_file, skills_dir
-        )
-        line_count = compiled.count("\n") + 1
-        total_agents += 1
+    if target_agent:
+        agent_files = [f for f in agent_files if f.stem == target_agent]
+        if not agent_files:
+            print(f"    Error: agent '{target_agent}' not found")
+            return False
 
-        # Write outputs
-        flat_path = write_flat(compiled, name, out_dir)
-        skill_dir = write_agentskill(compiled, name, desc, plugin_name, out_dir)
+    # Compile agents
+    referenced_skills = set()
+    for agent_file in agent_files:
+        compiled, name, desc, k_skills, a_skills = compile_agent(agent_file, skills_dir)
+        referenced_skills.update(k_skills + a_skills)
+        count = line_count(compiled)
 
-        # Check limit
-        status = "OK" if line_count <= LINE_LIMIT else "OVER LIMIT"
-        if line_count > LINE_LIMIT:
-            issues.append((name, line_count))
+        write_flat(compiled, name, out_dir)
+        write_agentskill(compiled, name, desc, plugin_name, out_dir)
 
-        # Report
-        print(f"  {name}")
-        print(f"    Lines:     {line_count:>4}  [{status}]")
+        status = "OK" if count <= LINE_LIMIT else "OVER LIMIT"
+        if count > LINE_LIMIT:
+            issues.append((name, count))
+
+        print(f"    {name:<20} {count:>4} lines  [{status}]")
         if k_skills:
-            print(f"    Compiled:  {', '.join(k_skills)}")
+            print(f"      inlined: {', '.join(k_skills)}")
         if a_skills:
-            print(f"    Skipped:   {', '.join(a_skills)} (action)")
-        print(f"    Flat:      {flat_path}")
-        print(f"    Skill:     {skill_dir / 'SKILL.md'}")
-        print()
+            print(f"      on-demand: {', '.join(a_skills)}")
 
-    # Summary
-    print(f"--- {plugin_name} summary ---")
-    print(f"  Agents compiled: {total_agents}")
+    # Compile standalone skills (not referenced by any agent)
+    if not target_agent and skills_dir.exists():
+        standalone = []
+        for skill_file in sorted(skills_dir.glob("*/SKILL.md")):
+            sfm, sbody = parse_frontmatter(skill_file.read_text())
+            sname = sfm.get("name", skill_file.parent.name)
+            if sname not in referenced_skills:
+                desc = sfm.get("description", "")
+                write_agentskill(sbody.strip(), sname, desc, plugin_name, out_dir, source_type="skill")
+                count = line_count(sbody)
+                standalone.append((sname, count))
+                print(f"    {sname:<20} {count:>4} lines  [standalone]")
 
     if issues:
-        print(f"\n  OVER {LINE_LIMIT}-LINE LIMIT:")
+        print(f"\n    OVER {LINE_LIMIT}-LINE LIMIT:")
         for name, count in issues:
-            print(f"    {name}: {count} lines")
+            print(f"      {name}: {count} lines")
+        return False
+    return True
+
+
+def main():
+    target_plugin = sys.argv[1] if len(sys.argv) > 1 else None
+    target_agent = sys.argv[2] if len(sys.argv) > 2 else None
+
+    if target_plugin and not (PLUGINS_DIR / target_plugin).exists():
+        print(f"Error: plugin '{target_plugin}' not found in {PLUGINS_DIR}")
         sys.exit(1)
+
+    if target_plugin:
+        plugins = [PLUGINS_DIR / target_plugin]
     else:
-        print(f"  All agents within {LINE_LIMIT}-line limit.")
+        plugins = sorted(p for p in PLUGINS_DIR.iterdir() if p.is_dir())
+
+    print(f"Compiling to {COMPILED_DIR}/")
+
+    all_ok = True
+    for plugin_dir in plugins:
+        out_dir = COMPILED_DIR / plugin_dir.name
+        if not compile_plugin(plugin_dir, out_dir, target_agent):
+            all_ok = False
+
+    print(f"\n  {'All OK' if all_ok else 'Issues found'} (limit: {LINE_LIMIT} lines)")
+
+    if not all_ok:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
