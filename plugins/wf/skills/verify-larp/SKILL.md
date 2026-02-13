@@ -27,3 +27,17 @@ Automatic suspicion: `TODO`, `FIXME`, `pass`, `...`, `NotImplementedError`. Func
 **Warning** — works but is deceptive. Tests that don't verify real behavior, incomplete validation.
 
 **Suggestion** — technically correct but suspiciously simple. Under-implemented functions, unconsidered edge cases.
+
+## Output Format
+
+```
+### [CRITICAL|WARNING] {title}
+FILE: {path}:{line}
+
+THE LIE: What the code pretends to do
+THE TRUTH: What actually happens
+EVIDENCE: The actual code snippet
+IMPACT: What breaks when this lie is discovered in production
+```
+
+Finding no fake code is valid — report "No fake code detected" and stop.

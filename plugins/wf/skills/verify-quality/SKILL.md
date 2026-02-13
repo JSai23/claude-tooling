@@ -33,3 +33,23 @@ user-invocable: false
 - **F**: Fake code, missing tests, or fundamental design problems.
 
 Finding no issues is valid. Don't invent problems. Be specific — every finding needs path, line, description.
+
+## Production Readiness Checks
+
+Every check follows: state what you're checking, run the actual command, show the output, render verdict with evidence.
+
+- **Functionality**: Tests pass (run them), no skipped tests, critical paths traced
+- **Security**: No hardcoded secrets (grep for password/secret/api_key/token), no debug endpoints, input validation present
+- **Stability**: Errors handled not swallowed, no silent failures, appropriate logging
+- **Dependencies**: Pinned versions, lock files present, audit for known vulnerabilities
+
+## Output Format
+
+```
+### [PASS|FAIL] {Check name}
+COMMAND: what you ran
+OUTPUT: what you saw
+VERDICT: Pass/Fail — brief reason
+```
+
+Overall verdict: READY or NOT READY. Don't pass checks you didn't actually run.

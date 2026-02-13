@@ -1,6 +1,6 @@
 # WF Plugin Architecture
 
-## Agent → Skill → Subagent Map
+## Agent → Skill Map
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -54,40 +54,28 @@
 │  Role:              │  │  Role:              │
 │  End-of-cycle       │  │  Continuous cleanup  │
 │  quality review,    │  │  of LLM-generated   │
-│  delegates to       │  │  debt in code and   │
-│  subagents          │  │  docs               │
+│  delegates via      │  │  debt in code and   │
+│  Task tool          │  │  docs               │
 │                     │  │                     │
 │  Skills:            │  │  Skills:            │
 │  ┌─────────────────┐│  │  ┌─────────────────┐│
 │  │ verify-quality  ││  │  │ gardener-       ││
 │  │ (dimensions,    ││  │  │  standards      ││
 │  │  severity,      ││  │  │ (freshness,     ││
-│  │  grading)       ││  │  │  completeness,  ││
-│  ├─────────────────┤│  │  │  cross-linking, ││
-│  │ verify-larp     ││  │  │  priorities)    ││
-│  │ (fake code,     ││  │  └─────────────────┘│
-│  │  red flags)     ││  │                     │
-│  ├─────────────────┤│  │  Subagents: none    │
-│  │ verify-style    ││  │                     │
-│  │ (AI slop, dead  ││  │  Produces:          │
-│  │  code, naming)  ││  │  · cleaned code     │
-│  ├─────────────────┤│  │  · updated docs     │
-│  │ verify-design   ││  │  · garden report    │
-│  │ (architecture   ││  │                     │
-│  │  review)        ││  │  Model: sonnet      │
-│  └─────────────────┘│  │                     │
-│                     │  └─────────────────────┘
-│  Subagents:         │
-│  ┌─────────────────┐│
-│  │ verify-design-  ││
-│  │  auditor        ││
-│  │ verify-larp-    ││
-│  │  detector       ││
-│  │ verify-code-    ││
-│  │  cleaner        ││
-│  │ verify-         ││
-│  │  production-    ││
-│  │  reviewer       ││
+│  │  grading,       ││  │  │  completeness,  ││
+│  │  prod readiness)││  │  │  cross-linking, ││
+│  ├─────────────────┤│  │  │  priorities)    ││
+│  │ verify-larp     ││  │  └─────────────────┘│
+│  │ (fake code,     ││  │                     │
+│  │  red flags)     ││  │  Produces:          │
+│  ├─────────────────┤│  │  · cleaned code     │
+│  │ verify-style    ││  │  · updated docs     │
+│  │ (AI slop, dead  ││  │  · garden report    │
+│  │  code, naming)  ││  │                     │
+│  ├─────────────────┤│  │  Model: sonnet      │
+│  │ verify-design   ││  │                     │
+│  │ (architecture   ││  └─────────────────────┘
+│  │  review)        ││
 │  └─────────────────┘│
 │                     │
 │  Produces:          │
@@ -114,7 +102,7 @@
               ▼
          ┌──────────┐
          │ VERIFIER │──── creates ────► design-docs/plans/{name}/verification.md
-         └────┬─────┘     spawns ─────► 4 verify-* subagents
+         └────┬─────┘     delegates ──► 4 verification passes via Task tool
               │
               │ ongoing / as needed
               ▼
@@ -127,7 +115,7 @@
 ## User-Invokeable Skills
 
 ```
-/wf:design-doc [scope]     Generate or update agent design documentation
+/wf:doc [type]             Generate or update standard code documentation (docstrings, rustdoc, API refs)
 /wf:logging [type]         Log decisions, progress, deviations, discoveries
 ```
 

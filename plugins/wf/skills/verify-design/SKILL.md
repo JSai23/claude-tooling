@@ -29,3 +29,17 @@ Format findings as:
 - IMPACT: What would change
 
 Not naming/formatting (that's style). Not fake code (that's larp). Sound architecture is the goal, not findings.
+
+## Output Format
+
+```
+## Concern: {title}
+
+DIAGRAM: {ASCII dependency or data flow diagram}
+OBSERVATION: What the current design does
+QUESTION: Why is it this way? What's the tradeoff?
+ALTERNATIVE: Different approach to consider
+IMPACT: What would change if refactored
+```
+
+Refactor candidates as prioritized list with FROM/TO/TRADEOFF for each.

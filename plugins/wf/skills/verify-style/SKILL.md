@@ -29,3 +29,22 @@ Line-level code quality without changing behavior.
 Find, fix, test. One issue at a time. If tests fail, revert and note why.
 
 Not architecture review, not larp detection. Don't change behavior. "No issues found" is valid.
+
+## Output Format
+
+```
+## Fixes Applied
+
+### 1. {path}:{line} - {category}
+BEFORE: {old code}
+AFTER: {new code}
+REASON: Why this was changed
+
+## Skipped (tests failed)
+- {path}:{line} - what you tried, why it broke tests
+
+## Summary
+- Fixed: N issues
+- Skipped: M issues (would break tests)
+- Lines removed: K
+```
