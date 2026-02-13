@@ -13,21 +13,7 @@ Agent docs are design documentation that agents create and maintain — plans, l
 
 ## Core Doctrine
 
-**Concise detail is king.** Conciseness without detail is useless — it says nothing. Detail without conciseness is also useless — nobody reads it. Every sentence must be precise, information-dense, and earn its place. If it can be a diagram, make it a diagram. If it can be a table, make it a table. Wall-of-text is a failure mode.
-
-**Show, don't describe.** Default to visual communication:
-
-```
-PREFER                              AVOID
-─────────────────────────────       ─────────────────────────
-ASCII diagrams of flow              "Data flows from A to B
-Tables of states/transitions          and then to C where it
-Code-block structure maps             gets transformed into..."
-Sequence diagrams
-Dependency graphs
-```
-
-Use prose only to explain *why* — relationships, rationale, tradeoffs. Use visuals to show *what* and *how*.
+**Visual-first, prose-second.** Diagrams, tables, and code blocks over paragraphs. Prose explains *why*; visuals show *what* and *how*. Every sentence must be precise and information-dense.
 
 **Watch doc size.** When a single doc exceeds ~1000 lines, it's a sign it should be split. Monolithic specs that grow to thousands of lines exceed agent read limits and mix concerns that belong in separate files. Split by logical boundary — per-block plans, per-component living docs, per-concern sections into their own files.
 

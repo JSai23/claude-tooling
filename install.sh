@@ -18,7 +18,7 @@ claude plugin install vault --scope user
 # Install plugin-dev from official marketplace (for creating skills, agents, hooks)
 claude plugin install plugin-dev@claude-plugins-official --scope user
 
-# Install user config (CLAUDE.md + statusline)
+# Install user config (CLAUDE.md)
 "$TOOLING_DIR/user-config/install.sh"
 
 echo ""

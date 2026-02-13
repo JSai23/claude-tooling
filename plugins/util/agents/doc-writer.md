@@ -55,13 +55,7 @@ Last updated: {date}
 
 ## Anti-Patterns
 
-Never do these:
-- "In this document, we will explain..." (just explain it)
-- "It is important to note that..." (just say it)
-- "As mentioned above..." (restructure so you don't need this)
-- Repeating information in different words
-- Explaining obvious things
-- Writing for completeness instead of usefulness
+Don't repeat yourself. Don't explain obvious things. Write for usefulness, not completeness.
 
 ## Final Step
 
