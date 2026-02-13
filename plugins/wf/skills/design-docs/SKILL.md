@@ -22,8 +22,8 @@ Never write living docs about code that doesn't exist yet. Never plan in hindsig
 Bounded work with a lifecycle: `draft → active → complete`. A plan has milestones, acceptance criteria, and a defined end state. Once complete, it becomes a historical record of what was done and why. A completed plan going stale is fine — it's a snapshot.
 
 Plans live at the scope they describe:
-- System-level plans: `docs/plans/`
-- Package-level plans: `{package}/docs/plans/`
+- System-level plans: `design-docs/plans/`
+- Package-level plans: `{package}/design-docs/plans/`
 
 Plans can nest for large efforts — a parent plan defines the vision and phase ordering, child plans are independently buildable.
 
@@ -36,20 +36,20 @@ Describe how things work *now*. They have no end state — when the system chang
 - **Test docs** — test strategy, fixture guides, integration test setup
 
 Living docs live near what they describe:
-- System-level: `docs/`
-- Package-level: `{package}/docs/`
-- Test-level: `{test-dir}/docs/`
+- System-level: `design-docs/`
+- Package-level: `{package}/design-docs/`
+- Test-level: `{test-dir}/design-docs/`
 
 ### ARCHITECTURE.md
-The entry point. A system-level map that tells you what exists and links to deeper docs. An agent starting a fresh session reads this first to orient itself. Lives at `docs/ARCHITECTURE.md`.
+The entry point. A system-level map that tells you what exists and links to deeper docs. An agent starting a fresh session reads this first to orient itself. Lives at `design-docs/ARCHITECTURE.md`.
 
 ### PRINCIPLES.md
-Golden rules the team enforces. Short, opinionated, evolved through experience. Lives at `docs/PRINCIPLES.md`.
+Golden rules the team enforces. Short, opinionated, evolved through experience. Lives at `design-docs/PRINCIPLES.md`.
 
 ## Folder Structure
 
 ```
-docs/
+design-docs/
 ├── plans/
 │   ├── index.md                    # Catalogue of all plans
 │   └── {name}/
@@ -62,11 +62,11 @@ docs/
 └── {topic}.md                      # System-level living docs (hindsight)
 
 {package}/
-├── docs/
+├── design-docs/
 │   ├── plans/                      # Package-scoped plans
 │   └── {topic}.md                  # Package-level living docs
 └── tests/integration/
-    └── docs/                       # Test-level living docs
+    └── design-docs/                # Test-level living docs
 ```
 
 ## Agent Responsibilities

@@ -45,7 +45,7 @@ Each entry captures: what prompted the decision, what was decided, why, and what
 
 ## Plan Index (`index.md`)
 
-A table cataloguing all plans with name, status, date, and scope. Kept at `docs/plans/index.md`. Gardener maintains accuracy.
+A table cataloguing all plans with name, status, date, and scope. Kept at `design-docs/plans/index.md`. Gardener maintains accuracy.
 
 ## Lifecycle
 

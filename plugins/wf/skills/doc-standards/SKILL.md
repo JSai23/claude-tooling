@@ -23,8 +23,8 @@ A doc is stale when:
 
 ### Completeness
 Agent docs are incomplete when:
-- Active plans are missing from `docs/plans/index.md`
-- `docs/ARCHITECTURE.md` doesn't cover a major system component
+- Active plans are missing from `design-docs/plans/index.md`
+- `design-docs/ARCHITECTURE.md` doesn't cover a major system component
 - Plans are missing decision logs for significant decisions
 - A component was built or significantly changed but has no living doc
 
@@ -37,12 +37,12 @@ Documents should reference each other:
 
 ## What to Check
 
-### Plan Index (`docs/plans/index.md`)
+### Plan Index (`design-docs/plans/index.md`)
 - Every active plan has an entry
 - No entries for plans that don't exist
 - Status field is accurate (draft/active/complete)
 
-### Architecture (`docs/ARCHITECTURE.md`)
+### Architecture (`design-docs/ARCHITECTURE.md`)
 - Reflects actual system shape
 - Module/service names match real code
 - Dependency directions are accurate

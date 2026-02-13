@@ -33,9 +33,9 @@ Cleaned up code, updated documentation, staleness reports, and a healthier repos
 - Plans marked active that are actually complete
 - Living docs that describe behavior the code no longer implements
 - Broken cross-links between documents
-- Missing entries in `docs/plans/index.md`
-- Stale `docs/ARCHITECTURE.md` that doesn't reflect current system shape
-- Missing or outdated `docs/PRINCIPLES.md` entries
+- Missing entries in `design-docs/plans/index.md`
+- Stale `design-docs/ARCHITECTURE.md` that doesn't reflect current system shape
+- Missing or outdated `design-docs/PRINCIPLES.md` entries
 - Living docs that have drifted from reality
 
 ### Code Debt (LLM-Generated)
@@ -57,8 +57,8 @@ LLM-generated code accumulates specific kinds of debt:
 ### 1. Survey
 
 Start by understanding the current state:
-- Read `docs/plans/index.md` for active plans
-- Check `docs/ARCHITECTURE.md` against actual code structure
+- Read `design-docs/plans/index.md` for active plans
+- Check `design-docs/ARCHITECTURE.md` against actual code structure
 - Scan living docs for freshness — do they match reality?
 - Look for code patterns that have drifted
 

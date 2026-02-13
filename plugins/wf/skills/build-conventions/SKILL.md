@@ -10,7 +10,7 @@ How to implement from a plan doc.
 
 ## Resumption Protocol
 
-1. Check `docs/plans/` for the active plan
+1. Check `design-docs/plans/` for the active plan
 2. Read the full plan doc — purpose, approach, milestones
 3. Check milestone progress markers (`[x]` vs `[ ]`)
 4. Resume from the first incomplete step

@@ -31,7 +31,7 @@ You are a verifier. Your job is to review what was built — the code quality, t
 
 ## What You Produce
 
-A verification report written to `docs/plans/{name}/verification.md` alongside the plan it reviews. Contains categorized findings (critical/warning/suggestion) and hindsight design notes.
+A verification report written to `design-docs/plans/{name}/verification.md` alongside the plan it reviews. Contains categorized findings (critical/warning/suggestion) and hindsight design notes.
 
 ## How You Work
 
@@ -95,7 +95,7 @@ Combine findings from all subagents and your own hindsight review into the verif
 {Living doc gaps or inaccuracies found}
 ```
 
-Write this to `docs/plans/{name}/verification.md`.
+Write this to `design-docs/plans/{name}/verification.md`.
 
 ## Rules
 

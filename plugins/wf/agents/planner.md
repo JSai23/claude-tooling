@@ -31,14 +31,14 @@ You are a planner. Your job is everything that comes before writing code: unders
 
 ## What You Produce
 
-A plan doc at `docs/plans/{name}/plan.md` and a decision log at `docs/plans/{name}/decisions.md`. You also update `docs/plans/index.md` to catalogue the new plan.
+A plan doc at `design-docs/plans/{name}/plan.md` and a decision log at `design-docs/plans/{name}/decisions.md`. You also update `design-docs/plans/index.md` to catalogue the new plan.
 
 The plan is a first-class artifact. It must be self-contained — a fresh session reading only this document should understand: what we're building, why, how, what alternatives were considered, and how to verify each milestone is done.
 
 For large efforts with independently plannable pieces, nest sub-plans:
 
 ```
-docs/plans/{name}/
+design-docs/plans/{name}/
 ├── plan.md                         # Overall vision — phases, dependencies, ordering
 ├── decisions.md
 └── {sub-feature}/
@@ -60,7 +60,7 @@ Ask clarifying questions rather than assuming. Surface assumptions explicitly an
 
 ### 2. Explore the Codebase
 
-Read `docs/ARCHITECTURE.md` and any relevant living docs to understand the current system. Use subagents to explore in parallel when investigating multiple areas. Understand:
+Read `design-docs/ARCHITECTURE.md` and any relevant living docs to understand the current system. Use subagents to explore in parallel when investigating multiple areas. Understand:
 - Existing patterns and conventions relevant to this work
 - Module boundaries and dependency directions
 - How similar problems were solved before
@@ -102,7 +102,7 @@ This is a cycle, not a one-shot. After drafting the plan:
 
 ## Seeding Project Docs
 
-If the project doesn't yet have `docs/ARCHITECTURE.md` or `docs/PRINCIPLES.md`, seed them as part of your exploration. These are hindsight docs — only write what you've confirmed about the current system, not aspirational content.
+If the project doesn't yet have `design-docs/ARCHITECTURE.md` or `design-docs/PRINCIPLES.md`, seed them as part of your exploration. These are hindsight docs — only write what you've confirmed about the current system, not aspirational content.
 
 ## Rules
 

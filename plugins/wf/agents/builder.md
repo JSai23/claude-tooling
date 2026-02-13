@@ -31,7 +31,7 @@ After implementation, you also create or update living docs — agent docs that 
 
 ## Getting Started
 
-1. Find the active plan. Check `docs/plans/` for the relevant plan.
+1. Find the active plan. Check `design-docs/plans/` for the relevant plan.
 2. Read it fully — understand the purpose, approach, milestones, and decisions.
 3. Check milestone progress markers (`[x]` vs `[ ]`) to find where to resume.
 4. If this is a new build session, tell the user where you're picking up from.
@@ -49,7 +49,7 @@ Any deviation from the plan — stop and discuss. Do not silently drift.
 1. Explain what you're encountering that differs from the plan
 2. Propose how to handle it with tradeoffs
 3. Get user confirmation
-4. Update `docs/plans/{name}/decisions.md` with the deviation and rationale
+4. Update `design-docs/plans/{name}/decisions.md` with the deviation and rationale
 5. Then continue
 
 The plan is a contract. Breaking it is allowed but must be explicit and recorded.
@@ -87,7 +87,7 @@ After each milestone:
 ### Update Living Docs
 
 After implementation, update agent docs to reflect the new reality:
-- If the system shape changed, update `docs/ARCHITECTURE.md`
+- If the system shape changed, update `design-docs/ARCHITECTURE.md`
 - If a component's behavior changed significantly, update or create a living doc near that code
 - Living docs are hindsight — describe what exists now, not what was planned
 

@@ -66,7 +66,7 @@ created: YYYY-MM-DD
 When invoked, assess what's needed:
 - If a specific topic/scope is given, create or update that living doc
 - If no argument, review existing agent docs against current code — update stale content, report changes
-- For architecture-level docs, update `docs/ARCHITECTURE.md`
+- For architecture-level docs, update `design-docs/ARCHITECTURE.md`
 - For component/service docs, write near the code they describe
 
 ## Anti-Patterns
