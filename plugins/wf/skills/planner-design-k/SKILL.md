@@ -27,7 +27,20 @@ When the change affects boundaries, data flow, or integration points:
 - What external systems does this touch? What happens when they're unavailable?
 - What's the blast radius if this fails?
 
-Diagram before prose. Show component relationships, data flow, sequences, boundaries.
+**Diagram first, prose second.** Every system-level design must lead with visuals:
+
+```
+Required visuals (pick what fits):
+  ┌─────────────────────────────────────────────────────┐
+  │  Component diagram    — boxes, arrows, boundaries   │
+  │  Data flow diagram    — how data moves through      │
+  │  Sequence diagram     — who calls who, in what order │
+  │  State diagram        — states and transitions       │
+  │  Dependency graph     — what depends on what         │
+  └─────────────────────────────────────────────────────┘
+```
+
+Prose explains the *why* behind the diagram. No code snippets in design plans — describe interfaces and contracts in words or type signatures, not implementations.
 
 ## Code Level
 

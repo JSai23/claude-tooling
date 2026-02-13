@@ -11,6 +11,32 @@ user-invocable: false
 
 Agent docs are design documentation that agents create and maintain — plans, living docs, architecture maps, and principles. They live in `design-docs/` folders, separate from external docs (API references, generated documentation, user-facing guides).
 
+## Core Doctrine
+
+**Concise detail is king.** Conciseness without detail is useless — it says nothing. Detail without conciseness is also useless — nobody reads it. Every sentence must be precise, information-dense, and earn its place. If it can be a diagram, make it a diagram. If it can be a table, make it a table. Wall-of-text is a failure mode.
+
+**Show, don't describe.** Default to visual communication:
+
+```
+PREFER                              AVOID
+─────────────────────────────       ─────────────────────────
+ASCII diagrams of flow              "Data flows from A to B
+Tables of states/transitions          and then to C where it
+Code-block structure maps             gets transformed into..."
+Sequence diagrams
+Dependency graphs
+```
+
+Use prose only to explain *why* — relationships, rationale, tradeoffs. Use visuals to show *what* and *how*.
+
+**Code in plans — minimize.**
+- Design plans: **no code snippets.** Describe interfaces, contracts, data shapes — not implementation.
+- Implementation plans: code is expected but surgical. Show signatures, key types, critical algorithms. Not full implementations.
+
+**Documentation is every agent's duty.** Not the planner's job. Not "someone else will update this." Every agent — planner, builder, verifier, gardener — treats documentation health as a core output of their work. The next session's agent inherits what you leave behind. Stale docs, missing context, undocumented decisions — these are bugs you're shipping to the next version of yourself. Treat them with the same severity as broken tests.
+
+**Reflect before you finish.** Before completing any documentation task, step back: Does this doc make the system more legible to an agent starting cold? Would you understand this if you had no prior context? If not, fix it.
+
 ## Foresight vs Hindsight
 
 **Plans are foresight.** Written before building. "Here's what we're going to do."
@@ -111,15 +137,28 @@ created: YYYY-MM-DD
 
 Entries within docs use `[YYYY-MM-DD]` or `[YYYY-MM-DD HH:MM]` timestamps. Update the `updated` field on meaningful changes.
 
-## Agent Roles
+## Agent Roles in Documentation
 
-**Planner** — Creates plans. Reads ARCHITECTURE.md and living docs to understand the current state. Seeds ARCHITECTURE.md and PRINCIPLES.md if missing. Uses subagents for large file reads and parallel exploration. Confirms plan organization (sibling vs nested) with the user.
+Every agent owns documentation quality. The table below shows the *minimum* — go beyond it when you see gaps.
 
-**Builder** — Primary author of living docs. After implementation, creates or updates living docs to reflect reality. Updates plan docs with progress and decisions. Links new living docs from ARCHITECTURE.md. Living docs are a core output, not an afterthought.
+```
+Agent     │ Creates              │ Maintains                  │ Flags
+──────────┼──────────────────────┼────────────────────────────┼──────────────────────
+Planner   │ Plans, decisions.md  │ Seeds ARCHITECTURE.md,     │ Missing context,
+          │                      │ PRINCIPLES.md if absent    │ stale entry points
+──────────┼──────────────────────┼────────────────────────────┼──────────────────────
+Builder   │ Living docs after    │ Updates plans (progress,   │ Drift between plan
+          │ implementation       │ surprises), ARCHITECTURE   │ and reality
+──────────┼──────────────────────┼────────────────────────────┼──────────────────────
+Verifier  │ verification.md      │ Validates doc accuracy     │ Stale docs, missing
+          │                      │ alongside code quality     │ coverage, doc drift
+──────────┼──────────────────────┼────────────────────────────┼──────────────────────
+Gardener  │ —                    │ Audits all docs against    │ Orphaned plans,
+          │                      │ reality, prunes, cross-    │ broken links, gaps
+          │                      │ links, marks complete      │
+```
 
-**Verifier** — Checks doc accuracy alongside code quality. Writes verification.md. Flags stale living docs, missing coverage, ARCHITECTURE.md drift.
-
-**Gardener** — Maintains doc health over time. Audits living docs against reality, updates ARCHITECTURE.md and PRINCIPLES.md, marks completed plans, flags gaps.
+If you see a stale doc while doing other work, fix it or flag it. Don't walk past it.
 
 ## Lifecycle
 

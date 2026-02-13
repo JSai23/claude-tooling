@@ -37,3 +37,18 @@ Each milestone must be:
 Implementation-level detail normally belongs at the lowest plan level. For nested plans, the parent defines vision and ordering — child plans define the concrete steps and code structure.
 
 For small features, design and implementation may combine into a single document. For larger efforts, separate the system design plan from per-component implementation plans.
+
+## Code in Implementation Plans
+
+Code snippets are expected here — but surgical, not exhaustive:
+
+```
+GOOD                                    BAD
+────────────────────────────────        ────────────────────────────
+Function signatures / type defs         Full function implementations
+Key struct/class shapes                 Boilerplate setup code
+Critical algorithm pseudocode           Every helper and utility
+Interface contracts                     Import statements
+```
+
+Show enough that a builder knows *what* to build and the shape of the interfaces. Don't write the code for them — that's their job.
