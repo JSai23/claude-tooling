@@ -1,7 +1,11 @@
 ---
 name: common-doc-audit-k
 type: knowledge
-description: Documentation health verification — freshness, accuracy, cross-linking, diagram drift
+description: >
+  ALWAYS USE if you are the verifier or gardener. Use after any build cycle to audit
+  documentation accuracy — check diagram drift, living doc freshness, ARCHITECTURE.md
+  currency, cross-link integrity, and plan status. Gardener uses broadly across the
+  full doc tree; verifier uses post-build to confirm the builder did its doc duty.
 user-invocable: false
 ---
 

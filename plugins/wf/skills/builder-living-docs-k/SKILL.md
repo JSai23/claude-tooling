@@ -1,7 +1,11 @@
 ---
 name: builder-living-docs-k
 type: knowledge
-description: Builder's documentation duty — living docs, diagram maintenance, plan-to-reality reconciliation
+description: >
+  ALWAYS USE if you are the builder. Use after every implementation pass — update
+  living docs, maintain diagrams (Mermaid for formal, ASCII for loose), reconcile
+  plan with reality, update ARCHITECTURE.md when system shape changes. Documentation
+  is a core output, not an afterthought.
 user-invocable: false
 ---
 
