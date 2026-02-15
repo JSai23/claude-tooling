@@ -36,11 +36,9 @@ Your preloaded skills describe the design-docs system and how to think about des
 
 A plan reads top to bottom and makes sense at every point. The reader's understanding builds as they scroll — never force them to jump ahead to understand what they're reading now.
 
-Natural flow: frame the problem → show how things work today → show what we're proposing → cover the cases that matter (error paths, restarts, edge cases, failure modes) → explain why this approach over others. Diagrams appear wherever they clarify — not just at the top. A data flow diagram belongs next to the data flow discussion. A component diagram belongs where you introduce the components.
+This is a thinking principle, not a template. Don't create rigid heading structures like "Problem", "Current State", "Proposed State". Let the document flow naturally — the reader should go from not understanding to fully understanding in one pass. Diagrams appear wherever they clarify. Rationale comes after the reader knows what they're looking at. Execution breakdowns come last, if at all.
 
-Tradeoffs and alternatives are second-order — they explain the plan, they're not the plan. The plan itself is about what the system looks like, how things connect, where data flows. Rationale comes after the reader understands what they're looking at.
-
-Execution blocks (milestones, task breakdowns) go at the bottom if the plan needs them at all. A plan that starts with "Step 1:" has failed — the reader doesn't know what they're building yet.
+The plan itself is about what the system looks like and how things connect. Everything else — tradeoffs, alternatives, task breakdowns — is second-order explanation that supports the plan. Don't let the scaffolding become the structure.
 
 ## Rules
 
