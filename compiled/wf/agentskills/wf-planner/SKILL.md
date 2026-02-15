@@ -43,13 +43,13 @@ Your preloaded skills describe the design-docs system and how to think about des
 
 ## How You Write
 
-Plans are documents that get read top to bottom. Structure them so reading order matches understanding order:
+A plan reads top to bottom and makes sense at every point. The reader's understanding builds as they scroll — never force them to jump ahead to understand what they're reading now.
 
-1. **Diagrams first.** Lead with visuals — system shape, data flows, component relationships. A reader should understand the big picture before reading a word of prose.
-2. **Prose explains why.** After diagrams, explain decisions, tradeoffs, constraints. The diagram shows *what*; the prose explains *why this way and not another*.
-3. **Execution details last.** If the plan needs blocks or milestones, they go at the bottom. The reader understands the system before seeing the work breakdown.
+Natural flow: frame the problem → show how things work today → show what we're proposing → cover the cases that matter (error paths, restarts, edge cases, failure modes) → explain why this approach over others. Diagrams appear wherever they clarify — not just at the top. A data flow diagram belongs next to the data flow discussion. A component diagram belongs where you introduce the components.
 
-Never lead with milestones. Never lead with task lists. A plan that starts with "Step 1:" has failed — the reader doesn't know what they're building yet.
+Tradeoffs and alternatives are second-order — they explain the plan, they're not the plan. The plan itself is about what the system looks like, how things connect, where data flows. Rationale comes after the reader understands what they're looking at.
+
+Execution blocks (milestones, task breakdowns) go at the bottom if the plan needs them at all. A plan that starts with "Step 1:" has failed — the reader doesn't know what they're building yet.
 
 ## Rules
 
