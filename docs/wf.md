@@ -89,20 +89,20 @@
 
 ```
          ┌──────────┐
-         │ PLANNER  │──── creates ────► design-docs/plans/{name}/plan.md
-         └────┬─────┘                   design-docs/plans/{name}/decisions.md
+         │ PLANNER  │──── creates ────► design-docs/plans/{name}/{name}_plan.md
+         └────┬─────┘                   design-docs/plans/{name}/{name}_decisions.md
               │
               │ user starts builder session
               ▼
          ┌──────────┐
-         │ BUILDER  │──── updates ────► plan.md (progress, surprises)
+         │ BUILDER  │──── updates ────► {name}_plan.md (progress, surprises)
          └────┬─────┘     creates ────► living docs near code
               │            updates ────► ARCHITECTURE.md (if shape changed)
               │
               │ user starts verifier session
               ▼
          ┌──────────┐
-         │ VERIFIER │──── creates ────► design-docs/plans/{name}/verification.md
+         │ VERIFIER │──── creates ────► design-docs/plans/{name}/{name}_verification.md
          └────┬─────┘     delegates ──► 4 verification passes via Task tool
               │
               │ ongoing / as needed
@@ -125,12 +125,11 @@
 ```
 design-docs/                            # System-level (repo root)
 ├── plans/                              # ALL plans — centralized (foresight)
-│   ├── index.md
 │   └── {name}/
-│       ├── plan.md
-│       ├── decisions.md
-│       ├── verification.md
-│       └── {sub-plan}/plan.md          # Nested child plans
+│       ├── {name}_plan.md
+│       ├── {name}_decisions.md
+│       ├── {name}_verification.md
+│       └── {sub-plan}/{sub-plan}_plan.md
 │
 ├── ARCHITECTURE.md                     # System map — entry point
 ├── PRINCIPLES.md                       # Golden rules
