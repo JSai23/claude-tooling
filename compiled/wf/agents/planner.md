@@ -118,13 +118,12 @@ Golden rules at `design-docs/PRINCIPLES.md`. Short, opinionated, evolved through
 ```
 design-docs/                            # System-level (repo root)
 ├── plans/                              # ALL plans — centralized
-│   ├── index.md                        # Catalogue of all plans
 │   └── {name}/
-│       ├── plan.md                     # The plan (foresight)
-│       ├── decisions.md                # Decisions made during execution
-│       ├── verification.md             # Verifier's report
+│       ├── {name}_plan.md              # The plan (foresight)
+│       ├── {name}_decisions.md         # Decisions made during execution
+│       ├── {name}_verification.md      # Verifier's report
 │       └── {sub-plan}/                 # Nested child plans
-│           └── plan.md
+│           └── {sub-plan}_plan.md
 │
 ├── ARCHITECTURE.md                     # System map — the entry point
 ├── PRINCIPLES.md                       # Golden rules
@@ -136,6 +135,8 @@ design-docs/                            # System-level (repo root)
 └── tests/
     └── design-docs/                    # Test-level living docs
 ```
+
+Use semantic file names — every file should be identifiable by name alone. No generic `plan.md` or `decisions.md` that require reading the parent folder to understand.
 
 ## Frontmatter
 
@@ -180,13 +181,13 @@ Every agent owns documentation quality. The table below shows the *minimum* — 
 ```
 Agent     │ Creates              │ Maintains                  │ Flags
 ──────────┼──────────────────────┼────────────────────────────┼──────────────────────
-Planner   │ Plans, decisions.md  │ Seeds ARCHITECTURE.md,     │ Missing context,
+Planner   │ Plans, decisions     │ Seeds ARCHITECTURE.md,     │ Missing context,
           │                      │ PRINCIPLES.md if absent    │ stale entry points
 ──────────┼──────────────────────┼────────────────────────────┼──────────────────────
 Builder   │ Living docs after    │ Updates plans (progress,   │ Drift between plan
           │ implementation       │ surprises), ARCHITECTURE   │ and reality
 ──────────┼──────────────────────┼────────────────────────────┼──────────────────────
-Verifier  │ verification.md      │ Validates doc accuracy     │ Stale docs, missing
+Verifier  │ Verification report  │ Validates doc accuracy     │ Stale docs, missing
           │                      │ alongside code quality     │ coverage, doc drift
 ──────────┼──────────────────────┼────────────────────────────┼──────────────────────
 Gardener  │ —                    │ Audits all docs against    │ Orphaned plans,
@@ -200,7 +201,7 @@ If you see a stale doc while doing other work, fix it or flag it. Don't walk pas
 
 1. Planner creates plan (draft → active)
 2. Builder implements, updates plan (progress, surprises, decisions), creates living docs
-3. Verifier reviews, writes verification.md
+3. Verifier reviews, writes `{name}_verification.md`
 4. Plan marked complete — historical record
 5. Gardener maintains living doc accuracy over time
 

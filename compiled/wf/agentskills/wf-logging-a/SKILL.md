@@ -19,7 +19,7 @@ Record a structured log entry in the active plan doc or decision log.
 ## Log Types
 
 ### Decision (`decision`)
-Record a decision with rationale in `design-docs/plans/{name}/decisions.md`:
+Record a decision with rationale in `design-docs/plans/{name}/{name}_decisions.md`:
 
 ```markdown
 ## [YYYY-MM-DD] {Decision Title}
@@ -61,7 +61,7 @@ Impact: {Effect on remaining milestones}
 
 ## Process
 
-1. Determine which plan is active (check `design-docs/plans/index.md` or locate active plan in the relevant scope)
+1. Determine which plan is active (scan `design-docs/plans/` for active plans or locate the active plan in the relevant scope)
 2. Determine log type from arguments or ask
 3. Gather the relevant information
 4. Write the entry to the correct location

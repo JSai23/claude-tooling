@@ -60,7 +60,7 @@ Plans are foresight. Living docs are hindsight. Your job is bridging the gap.
 
 As you build, reality diverges from the plan. This is expected. Your duty:
 
-1. **Record the divergence** — update decisions.md with what changed and why
+1. **Record the divergence** — update `{name}_decisions.md` with what changed and why
 2. **Update the plan** — mark progress, note surprises
 3. **Write the truth** — living docs describe what IS, not what was planned
 

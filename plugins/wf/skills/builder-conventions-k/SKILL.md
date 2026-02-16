@@ -19,7 +19,7 @@ Any deviation from the plan:
 1. STOP — explain what differs from the plan
 2. PROPOSE — how to handle it, with tradeoffs
 3. CONFIRM — get user agreement
-4. RECORD — update decisions.md with the deviation and rationale
+4. RECORD — update `{name}_decisions.md` with the deviation and rationale
 5. CONTINUE
 
 Never silently drift from the plan.
@@ -30,7 +30,7 @@ After each milestone:
 - Mark steps as `[x]` in the plan doc
 - Add timestamped entry to the Progress section
 - Record surprises in the Surprises section
-- Record decisions in decisions.md
+- Record decisions in `{name}_decisions.md`
 
 ## Code Standards
 
