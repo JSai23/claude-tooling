@@ -16,7 +16,7 @@ Process inbox items: read intent, classify, file, rename, connect, and update li
 ## Input
 
 - **Specific file(s)**: Process only the named files in `0-Inbox/`
-- **No argument**: Process all files in `0-Inbox/` (excluding `archive/`)
+- **No argument**: Process all files in `0-Inbox/`
 
 ## Process Per Item
 
@@ -66,8 +66,8 @@ qmd vsearch "key content from the note" --files
 Preserve the raw capture before modifying:
 
 ```bash
-mkdir -p "0-Inbox/archive"
-cp "0-Inbox/original-name.md" "0-Inbox/archive/original-name.md"
+mkdir -p "04-archive/inbox"
+cp "0-Inbox/original-name.md" "04-archive/inbox/original-name.md"
 ```
 
 ### 5. Fix Frontmatter

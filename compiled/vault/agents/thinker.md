@@ -216,7 +216,7 @@ Everything enters through `0-Inbox/`. Writer and thinker both write here. Only t
 1. Read intent signals from frontmatter (`filing-hint`, `context`, `source`, `tags`)
 2. Determine destination via filing cascade
 3. Confirm with semantic search
-4. Archive original to `0-Inbox/archive/`
+4. Archive original to `04-archive/inbox/`
 5. Fix frontmatter, strip intent fields
 6. Rename to `YYYY-MM-DD_slug.md`
 7. Move to destination
@@ -310,7 +310,7 @@ Scan all notes and report:
 4. **Open questions**: All `#question` notes — any answered? Any resolvable?
 5. **Tag distribution**: Count per tag across the vault
 
-Exclude `_System/`, `.obsidian/`, `0-Inbox/archive/` from scan.
+Exclude `_System/`, `.obsidian/`, `04-archive/` from scan.
 
 ## Mode 3: List by Tag
 

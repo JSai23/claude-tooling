@@ -75,7 +75,7 @@ Processing happens later via `/auto-process-a` or the librarian agent.
 
 When processing inbox items:
 1. The **processed version** goes to its PARA destination (renamed, frontmatter fixed, connected)
-2. The **original raw capture** moves to `0-Inbox/archive/`
+2. The **original raw capture** moves to `04-archive/inbox/`
 3. Never delete inbox items — move originals to archive
 
 ## Depth Enforcement

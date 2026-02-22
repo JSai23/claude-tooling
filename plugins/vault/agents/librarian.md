@@ -61,7 +61,7 @@ qmd vsearch "key content from the note" --files
 
 ### 4. Process the Note
 
-1. **Archive original**: Copy raw version to `0-Inbox/archive/`
+1. **Archive original**: Copy raw version to `04-archive/inbox/`
 2. **Fix frontmatter**: Apply correct schema, validate tags, set appropriate `status`
 3. **Remove intent fields**: Strip `filing-hint`, `context`, `source` (they served their purpose)
 4. **Rename**: `YYYY-MM-DD_descriptive-slug.md`

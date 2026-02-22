@@ -122,7 +122,7 @@ Everything enters through `0-Inbox/`. Writer and thinker both write here. Only t
 1. Read intent signals from frontmatter (`filing-hint`, `context`, `source`, `tags`)
 2. Determine destination via filing cascade
 3. Confirm with semantic search
-4. Archive original to `0-Inbox/archive/`
+4. Archive original to `04-archive/inbox/`
 5. Fix frontmatter, strip intent fields
 6. Rename to `YYYY-MM-DD_slug.md`
 7. Move to destination

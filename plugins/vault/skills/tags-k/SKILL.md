@@ -71,7 +71,7 @@ Scan all notes and report:
 4. **Open questions**: All `#question` notes — any answered? Any resolvable?
 5. **Tag distribution**: Count per tag across the vault
 
-Exclude `_System/`, `.obsidian/`, `0-Inbox/archive/` from scan.
+Exclude `_System/`, `.obsidian/`, `04-archive/` from scan.
 
 ## Mode 3: List by Tag
 
