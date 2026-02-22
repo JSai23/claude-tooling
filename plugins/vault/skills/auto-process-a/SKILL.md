@@ -63,11 +63,11 @@ qmd vsearch "key content from the note" --files
 
 ### 4. Archive Original
 
-Preserve the raw capture before modifying:
+Preserve the raw capture before modifying. Rename to `YYYY-MM-DD_descriptive-slug.md` but keep frontmatter and content as-is — naming is the one thing we always enforce, even on raw archives:
 
 ```bash
 mkdir -p "04-archive/inbox"
-cp "0-Inbox/original-name.md" "04-archive/inbox/original-name.md"
+cp "0-Inbox/original-name.md" "04-archive/inbox/YYYY-MM-DD_slug.md"
 ```
 
 ### 5. Fix Frontmatter
