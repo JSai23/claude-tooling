@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Kill entire process group on Ctrl+C so child processes die too
+trap 'trap - INT; kill -INT 0' INT
+trap 'trap - TERM; kill -TERM 0' TERM
+
 # =============================================================================
 # Agent Loop Runner
 # Run from the root directory of the project you want sessions in.
@@ -8,13 +12,14 @@ set -euo pipefail
 # Usage:
 #   ./agents/run.sh
 #   ./agents/run.sh --max-iter 5
-#   WORKER_SPEC=planner.md REVIEWER_SPEC=plan-reviewer.md ./agents/run.sh
+#   ./agents/run.sh --start-with reviewer
+#   WORKER_SPEC=planner.md ./agents/run.sh
 #
 # Expects:
-#   agents/prompts/session.md        — shared base
-#   agents/prompts/worker.md         — worker primitive
-#   agents/prompts/reviewer.md       — reviewer primitive
-#   agents/session/SESSION_WORKER.md — session-specific worker instructions
+#   agents/prompts/session.md          — shared base
+#   agents/prompts/worker.md           — worker primitive
+#   agents/prompts/reviewer.md         — reviewer primitive
+#   agents/session/SESSION_WORKER.md   — session-specific worker instructions
 #   agents/session/SESSION_REVIEWER.md — session-specific reviewer instructions
 #
 # Optional:
@@ -30,6 +35,9 @@ REVIEWER_SPEC="${REVIEWER_SPEC:-}"             # specialization file in agents/p
 MAX_ITERATIONS="${MAX_ITERATIONS:-10}"
 WORKER_MAX_TURNS="${WORKER_MAX_TURNS:-30}"
 REVIEWER_MAX_TURNS="${REVIEWER_MAX_TURNS:-20}"
+START_WITH="${START_WITH:-worker}"             # worker or reviewer
+CLAUDE_EFFORT="${CLAUDE_EFFORT:-medium}"       # low, medium, high (env var: CLAUDE_CODE_EFFORT_LEVEL)
+CODEX_EFFORT="${CODEX_EFFORT:-high}"           # low, medium, high, xhigh (codex -c model_reasoning_effort)
 
 # --- Paths (relative to project root) ---
 AGENTS_DIR="./agents"
@@ -47,6 +55,9 @@ while [[ $# -gt 0 ]]; do
     --reviewer-spec) REVIEWER_SPEC="$2"; shift 2 ;;
     --worker-turns) WORKER_MAX_TURNS="$2"; shift 2 ;;
     --reviewer-turns) REVIEWER_MAX_TURNS="$2"; shift 2 ;;
+    --start-with) START_WITH="$2"; shift 2 ;;
+    --claude-effort) CLAUDE_EFFORT="$2"; shift 2 ;;
+    --codex-effort) CODEX_EFFORT="$2"; shift 2 ;;
     *) echo "Unknown arg: $1"; exit 1 ;;
   esac
 done
@@ -69,6 +80,16 @@ if [[ ! -f "$SCRIPTS_DIR/SESSION_REVIEWER.md" ]]; then
   exit 1
 fi
 
+if [[ "$START_WITH" != "worker" && "$START_WITH" != "reviewer" ]]; then
+  echo "ERROR: --start-with must be 'worker' or 'reviewer', got '$START_WITH'"
+  exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+  echo "ERROR: jq is required for streaming Claude output. Install with: brew install jq"
+  exit 1
+fi
+
 # --- Setup ---
 SESSION_ID="$(date +%Y%m%d_%H%M%S)"
 SESSION_LOG_DIR="$LOG_DIR/$SESSION_ID"
@@ -82,10 +103,9 @@ log() {
 }
 
 # --- Compose system prompt ---
-# Concatenates: session.md + primitive (worker/reviewer) + optional specialization
 compose_system_prompt() {
-  local primitive="$1"  # worker.md or reviewer.md
-  local spec="$2"       # specialization filename or empty
+  local primitive="$1"
+  local spec="$2"
 
   cat "$PROMPTS_DIR/session.md"
   echo ""
@@ -103,10 +123,10 @@ compose_system_prompt() {
 
 # --- Run a single agent turn ---
 run_agent() {
-  local role="$1"       # "worker" or "reviewer"
-  local runtime="$2"    # "claude" or "codex"
-  local primitive="$3"  # worker.md or reviewer.md
-  local spec="$4"       # specialization filename or empty
+  local role="$1"
+  local runtime="$2"
+  local primitive="$3"
+  local spec="$4"
   local max_turns="$5"
   local iter="$6"
   local padded_iter
@@ -125,21 +145,29 @@ run_agent() {
   role_upper="$(echo "$role" | tr '[:lower:]' '[:upper:]')"
 
   if [[ "$runtime" == "claude" ]]; then
-    claude -p \
+    # stream-json streams events in real-time (text buffers till end).
+    # Pipe: claude → tee (raw json to log) → jq (readable text to terminal).
+    # stderr goes to log file only (debug noise).
+    CLAUDE_CODE_EFFORT_LEVEL="$CLAUDE_EFFORT" claude -p \
       --dangerously-skip-permissions \
       --system-prompt-file "$system_prompt_file" \
       --max-turns "$max_turns" \
-      --output-format text \
+      --output-format stream-json \
+      --verbose \
       "Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
-      2>&1 | tee -a "$turn_log" "$MASTER_LOG" || exit_code=$?
+      2>>"$turn_log" | \
+      tee -a "$turn_log" | \
+      jq --unbuffered -rj -f "$AGENTS_DIR/stream-filter.jq" || exit_code=$?
 
   elif [[ "$runtime" == "codex" ]]; then
+    # Codex already streams nicely. Tee to log, show on terminal.
     codex exec \
       --full-auto \
+      -c model_reasoning_effort="$CODEX_EFFORT" \
       "$(cat "$system_prompt_file")
 
 Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
-      2>&1 | tee -a "$turn_log" "$MASTER_LOG" || exit_code=$?
+      2>&1 | tee -a "$turn_log" || exit_code=$?
 
   else
     log "ERROR: Unknown runtime '$runtime'"
@@ -156,29 +184,37 @@ Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SE
   return $exit_code
 }
 
+check_stop() {
+  if [[ -f "$AGENTS_DIR/STOP.txt" || -f "$AGENTS_DIR/STOP" ]]; then
+    log "STOP file found after $1 turn $2. Ending session."
+    return 0
+  fi
+  return 1
+}
+
 # --- Main loop ---
 log "========================================="
 log "Session $SESSION_ID started"
-log "Worker:   $WORKER_RUNTIME (spec: ${WORKER_SPEC:-none})"
-log "Reviewer: $REVIEWER_RUNTIME (spec: ${REVIEWER_SPEC:-none})"
+log "Worker:   $WORKER_RUNTIME (spec: ${WORKER_SPEC:-none}, effort: $CLAUDE_EFFORT)"
+log "Reviewer: $REVIEWER_RUNTIME (spec: ${REVIEWER_SPEC:-none}, effort: $CODEX_EFFORT)"
+log "Start with: $START_WITH"
 log "Max iterations: $MAX_ITERATIONS"
 log "========================================="
 
 for i in $(seq 1 "$MAX_ITERATIONS"); do
-  # --- Worker turn ---
-  run_agent "worker" "$WORKER_RUNTIME" "worker.md" "$WORKER_SPEC" "$WORKER_MAX_TURNS" "$i"
 
-  if [[ -f "$AGENTS_DIR/STOP.txt" || -f "$AGENTS_DIR/STOP" ]]; then
-    log "STOP file found after worker turn $i. Ending session."
-    break
-  fi
+  if [[ "$START_WITH" == "reviewer" ]]; then
+    run_agent "reviewer" "$REVIEWER_RUNTIME" "reviewer.md" "$REVIEWER_SPEC" "$REVIEWER_MAX_TURNS" "$i"
+    check_stop "reviewer" "$i" && break
 
-  # --- Reviewer turn ---
-  run_agent "reviewer" "$REVIEWER_RUNTIME" "reviewer.md" "$REVIEWER_SPEC" "$REVIEWER_MAX_TURNS" "$i"
+    run_agent "worker" "$WORKER_RUNTIME" "worker.md" "$WORKER_SPEC" "$WORKER_MAX_TURNS" "$i"
+    check_stop "worker" "$i" && break
+  else
+    run_agent "worker" "$WORKER_RUNTIME" "worker.md" "$WORKER_SPEC" "$WORKER_MAX_TURNS" "$i"
+    check_stop "worker" "$i" && break
 
-  if [[ -f "$AGENTS_DIR/STOP.txt" || -f "$AGENTS_DIR/STOP" ]]; then
-    log "STOP file found after reviewer turn $i. Ending session."
-    break
+    run_agent "reviewer" "$REVIEWER_RUNTIME" "reviewer.md" "$REVIEWER_SPEC" "$REVIEWER_MAX_TURNS" "$i"
+    check_stop "reviewer" "$i" && break
   fi
 
   log "Iteration $i complete."

@@ -17,6 +17,10 @@ These come from the reviewer agent steering you between iterations.
 
 Your primary session-specific instructions are in `agents/session/SESSION_WORKER.md`. Read it first. Your specialization prompt may also reference additional input files.
 
+## Standing Rules
+
+- **No backwards compatibility.** Never add shims, deprecated wrappers, `_old` suffixes, or compatibility layers. When you change something, change it everywhere — update all call sites. Use LSP/grep to find every reference. Backwards compatibility is only acceptable when the user explicitly asks for it.
+
 ## Continuity Files You Must Maintain
 
 You must update these before exiting. If you don't, the next session is blind.
