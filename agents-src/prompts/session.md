@@ -30,6 +30,13 @@ The system is simple:
 3. The loop runs until one agent spawns `STOP.txt`.
 4. Each iteration is a headless instance kept alive by a script — one starts as the other finishes.
 
+## Iteration Awareness
+
+Your invocation message tells you which iteration you are on (e.g., "iteration 3 of 8"). Use this to pace your work:
+- **Early iterations** (1-2): tackle the highest-priority items. Don't try to do everything.
+- **Middle iterations**: work through remaining items in priority order.
+- **Final iteration**: focus on consistency and completeness. Don't start new large changes — clean up what's been done. If all items are resolved, write `STOP`.
+
 **It is crucial that you update your continuity files correctly.** The next instance depends entirely on what you leave behind.
 
 ## File Archiving Convention
