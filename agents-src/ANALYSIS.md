@@ -1,189 +1,142 @@
-# System Analysis — Flow, Gaps, and Suggestions
+# Agent Loop System
 
-## The Architecture
+## The Primitive
 
-Two primitives. That's it.
+One primitive: **boss + worker**. The reviewer is the boss. The worker executes. That's the only relationship in the system.
+
+It's 1:1 because there's no strong argument for N workers sharing one reviewer — if you need more parallelism, spawn more pairs. Each pair gets its own `agents/` directory, its own continuity files, its own loop. Pairs don't coordinate with each other. Scale horizontally, not vertically.
+
+## Prompt Composition
+
+Every agent invocation is layers concatenated into one system prompt:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   COMPOSITION MODEL                  │
-│                                                     │
-│   session.md           (shared rules, all agents)   │
-│       ↓                                             │
-│   worker.md  OR  reviewer.md   (primitive role)     │
-│       ↓                                             │
-│   [specialization].md          (optional layer)     │
-│       ↓                                             │
-│   [invocation inputs]          (task, manifesto…)   │
-└─────────────────────────────────────────────────────┘
+session.md              shared rules (stopping, archiving, iteration pacing)
+    +
+worker.md OR reviewer.md    primitive role (what to read, what to write)
+    +
+[specialization].md         optional domain layer (planner.md, executor.md, ...)
 ```
 
-Every agent in the system is either a worker or a reviewer. Specializations don't create new primitives — they layer domain knowledge on top.
+Task-specific context lives in `agents/session/` and is read by the agent at runtime, not baked into the system prompt.
 
-**Examples:**
+| Agent | = | Primitive | + Specialization |
+|-------|---|-----------|------------------|
+| Plan writer | | worker | planner.md |
+| Plan reviewer | | reviewer | (review focus in SESSION_REVIEWER.md) |
+| Code executor | | worker | executor.md |
+| Code reviewer | | reviewer | (review focus in SESSION_REVIEWER.md) |
 
-| Agent | = | Primitive | + Specialization | + Inputs |
-|-------|---|-----------|------------------|----------|
-| Plan writer | | worker | planner.md | manifesto, user thoughts, plan file |
-| Plan reviewer | | reviewer | (plan-review focus in invocation) | same manifesto, plan file |
-| Rust executor | | worker | rust-executor.md | task file, plan reference |
-| Code reviewer | | reviewer | (code-review focus in invocation) | same task context |
+Specializations compose onto primitives. They add domain process (planning phases, coding conventions) but don't change the fundamental role. New specialization = new `.md` file in `prompts/`, same loop, same runner.
 
 ## The Loop
 
 ```
-    ┌─────────────────────────────────────────────┐
-    │            RUNNER SCRIPT (bash)              │
-    │   Concatenates prompts, alternates agents    │
-    └──────┬───────────────────────┬──────────────┘
-           │                       │
-    ┌──────▼──────┐         ┌──────▼──────┐
-    │   WORKER    │         │  REVIEWER   │
-    │             │         │             │
-    │ Reads:      │         │ Reads:      │
-    │  TASK input │         │  TASK input │
-    │  FEEDBACK   │         │  Worker's   │
-    │  DONEXT     │         │  output +   │
-    │  MEMORY     │         │  all state  │
-    │  TODO       │         │             │
-    │             │         │ Writes:     │
-    │ Writes:     │         │  FEEDBACK   │
-    │  Code       │         │  DONEXT     │
-    │  MEMORY     │         │  STOP.txt?  │
-    │  PROGRESS   │         │             │
-    │  TODO       │         │             │
-    │  STOP.txt?  │         │             │
-    └─────────────┘         └─────────────┘
-           │                       │
-           └──────────┬────────────┘
-                      │
-                 agents/ dir
-           (gitignored, ephemeral)
+run.sh
+  │
+  ├─► Worker turn (headless claude -p or codex exec)
+  │     reads:  SESSION_WORKER.md, FEEDBACK.md, DONEXT.md, MEMORY.md, TODO.md
+  │     writes: code/plan edits, MEMORY.md, PROGRESS.md, TODO.md
+  │
+  │   STOP? ──► exit
+  │
+  ├─► Reviewer turn (headless claude -p or codex exec)
+  │     reads:  SESSION_REVIEWER.md, everything the worker left behind
+  │     writes: FEEDBACK.md, DONEXT.md
+  │
+  │   STOP? ──► exit
+  │
+  └─► repeat (up to MAX_ITERATIONS)
 ```
 
-Repeats until STOP.txt appears.
+Each turn is a fresh headless invocation. Agents are ephemeral — they read files, do work, write files, die. The next agent picks up from the files.
 
----
+## Continuity Files
 
-## What's Solid
+The only state that survives between turns:
 
-1. **Two-primitive constraint** is clean and composable. No role confusion, no third category.
-2. **File-based continuity** — simple, debuggable, no shared memory or APIs.
-3. **Specialization as layering** — same script, same loop, different prompts. New specializations don't require new infrastructure.
-4. **Reviewer personality** — opinionated in the right ways.
-5. **Planning decomp process** — manifesto → decomp → design → scaffolding → blocks is thorough.
+| File | Owner | Purpose |
+|---|---|---|
+| `MEMORY.md` | Worker | Append-only log — discoveries, decisions, bugs |
+| `PROGRESS.md` | Worker | Point-in-time snapshot of where the effort stands |
+| `TODO.md` | Worker | Living task list |
+| `FEEDBACK.md` | Reviewer | Advisory — suggestions, questions, opinions |
+| `DONEXT.md` | Reviewer | Directive — "do this next" |
+| `STOP.txt` | Either | Kills the loop |
 
----
+Old FEEDBACK/DONEXT get archived with sequential numbering (`archive/FEEDBACK_001.md`, etc.) before being overwritten.
 
-## Gaps
+## Session Setup
 
-### 1. Runner script doesn't exist
-The glue that makes it all work. Needs to:
-- Concatenate session + primitive + specialization prompts
-- Alternate worker ↔ reviewer invocations
-- Check for STOP.txt between iterations
-- Pass task-specific inputs
-- Capture transcripts
+Before running, you create task-specific files in `agents/session/`:
 
-### 2. Prompt composition mechanics
-Each invocation = session.md + primitive + specialization + task inputs. The runner needs to assemble these. Options:
-- `cat` files together into a temp file, pass via `--system-prompt-file`
-- For Codex: inline the concatenated content in the exec prompt (since Codex uses AGENTS.md for persistent system-level stuff)
+| File | Required | Purpose |
+|---|---|---|
+| `SESSION_WORKER.md` | yes | What the worker should do — task, file paths, constraints, methodology |
+| `SESSION_REVIEWER.md` | yes | What the reviewer should focus on — review criteria, plan file, stop conditions |
+| `MANIFESTO.md` | for planner | What the software does and why |
+| `USER_THOUGHTS.md` | for planner | How you think it should work |
 
-### 3. Task input mechanism
-Who writes the initial task file? How does a plan become task inputs for the execution loop? This bridge is undefined.
+The runner script validates the two SESSION files exist before starting. Everything else is referenced by the specialization prompts but not hard-validated.
 
-### 4. Worker ↔ reviewer handoff
-What exactly does the reviewer see from the worker? The doc says "full transcription will be made available" — mechanism unspecified. Options:
-- Pipe worker stdout/json to a file the reviewer reads
-- Reviewer just reads agents/ dir (MEMORY, PROGRESS, TODO, code diffs)
-- Both
+## Iteration Pacing
 
-### 5. Runtime assignment (Claude vs Codex)
-The original doc says: Claude for plan writing, Codex for reviewing. But the prompts themselves shouldn't hardcode which runtime they run on — that's the runner script's job. Currently unspecified where this decision lives.
+The runner passes `"You are on iteration X of Y"` to each agent. `session.md` tells agents to use this:
 
-### 6. No error recovery
-If a worker crashes mid-run, continuity files may be half-written. Options:
-- Git-commit agents/ state between iterations
-- Runner checks: did PROGRESS.md get updated? If not, flag the error.
+- **Early iterations** (1-2): highest-priority items only
+- **Middle iterations**: remaining items in priority order
+- **Final iteration**: consistency and completeness, no new large changes, write STOP if done
 
-### 7. PROGRESS.md lifecycle
-Who reads it first before the worker overwrites it? Currently the worker prompt says "read then overwrite" — but if the reviewer needs to see last worker's progress, does the reviewer run *before* the next worker wipes it? (Yes — the loop is worker → reviewer → worker, so reviewer always sees the worker's PROGRESS.md before the next worker overwrites it. This is fine as long as the loop order is guaranteed.)
-
----
-
-## Suggested Next Steps
-
-### A. Build the runner script
-Minimal viable version:
+## Running
 
 ```bash
-#!/bin/bash
-set -euo pipefail
+cd /path/to/project
 
-AGENTS_DIR="./agents"
-PROMPTS_DIR="./agents/prompts"
-MAX_ITERATIONS="${MAX_ITERATIONS:-10}"
+# Planner loop (worker=claude, reviewer=codex by default)
+WORKER_SPEC=planner.md agents/run.sh
 
-# These get passed in or configured
-WORKER_SPECIALIZATION="${WORKER_SPEC:-}"    # e.g., planner.md
-REVIEWER_SPECIALIZATION="${REVIEWER_SPEC:-}" # e.g., plan-reviewer.md
-TASK_PROMPT="$1"  # The task-specific prompt/instruction
+# Both claude, 5 iterations max
+WORKER_SPEC=planner.md REVIEWER_RUNTIME=claude agents/run.sh --max-iter 5
 
-mkdir -p "$AGENTS_DIR/archive" "$AGENTS_DIR/transcripts"
-
-compose_prompt() {
-  local role="$1"      # worker.md or reviewer.md
-  local spec="$2"      # specialization file (optional)
-  cat "$PROMPTS_DIR/session.md" "$PROMPTS_DIR/$role"
-  [ -n "$spec" ] && [ -f "$PROMPTS_DIR/$spec" ] && cat "$PROMPTS_DIR/$spec"
-}
-
-for i in $(seq 1 "$MAX_ITERATIONS"); do
-  echo "=== Iteration $i: Worker ==="
-
-  claude -p \
-    --dangerously-skip-permissions \
-    --system-prompt-file <(compose_prompt worker.md "$WORKER_SPECIALIZATION") \
-    --max-turns 30 \
-    --output-format json \
-    "$TASK_PROMPT" \
-    > "$AGENTS_DIR/transcripts/worker_$(printf '%03d' $i).json"
-
-  [ -f "$AGENTS_DIR/STOP.txt" ] && echo "Worker stopped at iteration $i." && break
-
-  echo "=== Iteration $i: Reviewer ==="
-
-  codex exec \
-    --full-auto \
-    --json \
-    "$(compose_prompt reviewer.md "$REVIEWER_SPECIALIZATION")
-
-    $TASK_PROMPT
-
-    Review the current state in $AGENTS_DIR/ and output FEEDBACK.md and/or DONEXT.md." \
-    > "$AGENTS_DIR/transcripts/reviewer_$(printf '%03d' $i).json"
-
-  [ -f "$AGENTS_DIR/STOP.txt" ] && echo "Reviewer stopped at iteration $i." && break
-done
+# Custom turn limits
+agents/run.sh --worker-turns 40 --reviewer-turns 15
 ```
 
-### B. Define runtime assignment convention
-Put it in the runner script config, not the prompts. Something like:
+### Configuration
 
-```bash
-WORKER_RUNTIME="claude"   # or "codex"
-REVIEWER_RUNTIME="codex"  # or "claude"
+| Env / Flag | Default | Purpose |
+|---|---|---|
+| `WORKER_RUNTIME` / `--worker-runtime` | `claude` | CLI to run worker (`claude` or `codex`) |
+| `REVIEWER_RUNTIME` / `--reviewer-runtime` | `codex` | CLI to run reviewer |
+| `WORKER_SPEC` / `--worker-spec` | none | Specialization file in `prompts/` |
+| `REVIEWER_SPEC` / `--reviewer-spec` | none | Specialization file in `prompts/` |
+| `MAX_ITERATIONS` / `--max-iter` | 10 | Loop cap |
+| `WORKER_MAX_TURNS` / `--worker-turns` | 30 | Max agentic turns per worker invocation |
+| `REVIEWER_MAX_TURNS` / `--reviewer-turns` | 20 | Max agentic turns per reviewer invocation |
+
+## Directory Layout
+
+```
+agents/
+├── run.sh                          runner script
+├── prompts/
+│   ├── session.md                  shared rules
+│   ├── worker.md                   worker primitive
+│   ├── reviewer.md                 reviewer primitive
+│   ├── planner.md                  specialization: plan writing
+│   └── headless-reference.md       CLI reference (claude -p, codex exec)
+├── session/
+│   ├── SESSION_WORKER.md           task instructions for worker
+│   ├── SESSION_REVIEWER.md         task instructions for reviewer
+│   ├── MANIFESTO.md                what & why (planner input)
+│   └── USER_THOUGHTS.md            how (planner input)
+├── MEMORY.md                       worker continuity (append-only)
+├── PROGRESS.md                     worker continuity (overwrite)
+├── TODO.md                         worker continuity (living list)
+├── FEEDBACK.md                     reviewer output (current)
+├── DONEXT.md                       reviewer output (current)
+├── archive/                        old FEEDBACK/DONEXT with sequential numbering
+└── .script_logs/                   session transcripts
 ```
 
-The prompts stay runtime-agnostic. The runner picks which CLI to invoke.
-
-### C. Build one concrete specialization end-to-end
-Pick something real (the Rust Polymarket planner). Wire it up:
-1. Write `planner.md` specialization (done)
-2. Write the MANIFESTO.md and USER_THOUGHTS.md
-3. Run the loop
-4. See what breaks, iterate
-
-### D. Decide on the plan → execution bridge
-When planning finishes, how does the output become task input for an execution loop? Simplest: the plan file itself IS the task input for the executor worker.
+The entire `agents/` directory is gitignored. It's ephemeral working state, lost when the worktree is removed.

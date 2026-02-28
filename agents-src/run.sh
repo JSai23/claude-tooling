@@ -130,7 +130,7 @@ run_agent() {
       --system-prompt-file "$system_prompt_file" \
       --max-turns "$max_turns" \
       --output-format text \
-      "Begin. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
+      "Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
       2>&1 | tee -a "$turn_log" "$MASTER_LOG" || exit_code=$?
 
   elif [[ "$runtime" == "codex" ]]; then
@@ -138,7 +138,7 @@ run_agent() {
       --full-auto \
       "$(cat "$system_prompt_file")
 
-Begin. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
+Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
       2>&1 | tee -a "$turn_log" "$MASTER_LOG" || exit_code=$?
 
   else
