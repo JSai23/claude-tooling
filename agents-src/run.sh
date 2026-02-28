@@ -33,8 +33,8 @@ REVIEWER_RUNTIME="${REVIEWER_RUNTIME:-codex}"  # claude or codex
 WORKER_SPEC="${WORKER_SPEC:-}"                 # specialization file in agents/prompts/
 REVIEWER_SPEC="${REVIEWER_SPEC:-}"             # specialization file in agents/prompts/
 MAX_ITERATIONS="${MAX_ITERATIONS:-10}"
-WORKER_MAX_TURNS="${WORKER_MAX_TURNS:-30}"
-REVIEWER_MAX_TURNS="${REVIEWER_MAX_TURNS:-20}"
+WORKER_MAX_TURNS="${WORKER_MAX_TURNS:-}"         # empty = no limit; set to restrict
+REVIEWER_MAX_TURNS="${REVIEWER_MAX_TURNS:-}"     # empty = no limit; set to restrict
 START_WITH="${START_WITH:-worker}"             # worker or reviewer
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-medium}"       # low, medium, high (env var: CLAUDE_CODE_EFFORT_LEVEL)
 CODEX_EFFORT="${CODEX_EFFORT:-high}"           # low, medium, high, xhigh (codex -c model_reasoning_effort)
@@ -151,7 +151,7 @@ run_agent() {
     CLAUDE_CODE_EFFORT_LEVEL="$CLAUDE_EFFORT" claude -p \
       --dangerously-skip-permissions \
       --system-prompt-file "$system_prompt_file" \
-      --max-turns "$max_turns" \
+      ${max_turns:+--max-turns "$max_turns"} \
       --output-format stream-json \
       --verbose \
       "Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
