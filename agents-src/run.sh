@@ -121,6 +121,19 @@ compose_system_prompt() {
   fi
 }
 
+# --- Compose the session primer (the -p prompt argument) ---
+compose_primer() {
+  local role_upper="$1"
+  local iter="$2"
+  local session_file="$SCRIPTS_DIR/SESSION_${role_upper}.md"
+
+  cat "$session_file"
+  echo ""
+  echo "---"
+  echo ""
+  echo "You are on iteration ${iter} of ${MAX_ITERATIONS}. Begin."
+}
+
 # --- Run a single agent turn ---
 run_agent() {
   local role="$1"
@@ -133,40 +146,46 @@ run_agent() {
   padded_iter="$(printf '%03d' "$iter")"
 
   local turn_log="$SESSION_LOG_DIR/${role}_${padded_iter}.log"
+
   local system_prompt_file
   system_prompt_file="$(mktemp)"
   compose_system_prompt "$primitive" "$spec" > "$system_prompt_file"
+
+  local role_upper
+  role_upper="$(echo "$role" | tr '[:lower:]' '[:upper:]')"
+
+  local primer
+  primer="$(compose_primer "$role_upper" "$iter")"
 
   log "--- $role turn $iter ($runtime) ---"
   log "System prompt: $primitive${spec:+ + $spec}"
 
   local exit_code=0
-  local role_upper
-  role_upper="$(echo "$role" | tr '[:lower:]' '[:upper:]')"
 
   if [[ "$runtime" == "claude" ]]; then
-    # stream-json streams events in real-time (text buffers till end).
-    # Pipe: claude → tee (raw json to log) → jq (readable text to terminal).
-    # stderr goes to log file only (debug noise).
+    # --append-system-prompt-file adds our prompts to Claude's defaults.
+    # Session file content is the -p prompt (the first user message).
+    # stream-json streams events in real-time; piped through jq for display.
     CLAUDE_CODE_EFFORT_LEVEL="$CLAUDE_EFFORT" claude -p \
       --dangerously-skip-permissions \
-      --system-prompt-file "$system_prompt_file" \
+      --append-system-prompt-file "$system_prompt_file" \
       ${max_turns:+--max-turns "$max_turns"} \
       --output-format stream-json \
       --verbose \
-      "Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
+      "$primer" \
       2>>"$turn_log" | \
       tee -a "$turn_log" | \
       jq --unbuffered -rj -f "$AGENTS_DIR/stream-filter.jq" || exit_code=$?
 
   elif [[ "$runtime" == "codex" ]]; then
-    # Codex already streams nicely. Tee to log, show on terminal.
+    # Codex has no append mode — system prompt is passed inline.
+    # Session primer is appended after the system prompt as the user message.
     codex exec \
       --full-auto \
       -c model_reasoning_effort="$CODEX_EFFORT" \
       "$(cat "$system_prompt_file")
 
-Begin. You are on iteration ${iter} of ${MAX_ITERATIONS}. Read agents/session/SESSION_${role_upper}.md for your session instructions." \
+${primer}" \
       2>&1 | tee -a "$turn_log" || exit_code=$?
 
   else
