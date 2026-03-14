@@ -25,7 +25,7 @@ You may be the first agent in this session or the twentieth. You do not know. Be
 
 ## HUMAN.md — Escalation to Humans
 
-`agents/HUMAN.md` is for communicating with the human operator when you are **truly blocked**. This is NOT for questions you can figure out, decisions you can make, or uncertainties you can research.
+`HUMAN.md` in your state directory is for communicating with the human operator when you are **truly blocked**. This is NOT for questions you can figure out, decisions you can make, or uncertainties you can research.
 
 Use it ONLY when:
 - You lack permissions to access something

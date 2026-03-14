@@ -1,9 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Kill entire process group on Ctrl+C so child processes die too
-trap 'trap - INT; kill -INT 0' INT
-trap 'trap - TERM; kill -TERM 0' TERM
+# Traps are set after loop-log.sh is sourced (see cleanup function below)
 
 # =============================================================================
 # Agent Loop Runner (v2)
@@ -102,6 +100,21 @@ source "$SCRIPT_DIR/loop-log.sh" 2>/dev/null || source "$(dirname "$0")/loop-log
   echo "WARNING: loop-log.sh not found, tracking disabled"
 }
 
+# --- Crash cleanup trap ---
+# Writes loop_end/registry events on catchable signals so tracking logs aren't orphaned.
+# SIGKILL is uncatchable — the observe skill's liveness check handles that case.
+cleanup() {
+  log_event "loop_end" "$(jq -nc \
+    --argjson iters "${ITERATIONS_COMPLETED:-0}" \
+    '{iterations_completed: $iters, stop_reason: "crash"}')"
+  registry_event "end" "$(jq -nc \
+    --argjson iters "${ITERATIONS_COMPLETED:-0}" \
+    --arg tmux "${TMUX_SESSION:-}" \
+    '{iterations: $iters, stop_reason: "crash", tmux_session: $tmux}')"
+}
+trap 'cleanup; trap - INT; kill -INT 0' INT
+trap 'cleanup; trap - TERM; kill -TERM 0' TERM
+
 # --- tmux auto-wrap ---
 # If not already inside tmux, re-launch inside a named tmux session.
 if [[ -z "${TMUX:-}" ]] && command -v tmux &>/dev/null; then
@@ -123,8 +136,13 @@ if [[ -z "${TMUX:-}" ]] && command -v tmux &>/dev/null; then
   exec tmux new-session -d -s "$TMUX_SESSION" \
     "$(printf '%q ' "$0" "${REEXEC_ARGS[@]}")" \; \
     attach -t "$TMUX_SESSION"
+elif [[ -z "${TMUX:-}" ]]; then
+  # tmux not available, running in foreground
+  TMUX_SESSION=""
+  echo "WARNING: tmux not found. Loop will run in foreground (non-detachable)."
 fi
-TMUX_SESSION="${TMUX_SESSION:-loop-${LOOP_ID}}"
+# Inside tmux: session name is set by the tmux environment; use it or default empty
+TMUX_SESSION="${TMUX_SESSION:-}"
 
 # --- Validate prompts ---
 for f in "$PROMPTS_DIR/session.md" "$PROMPTS_DIR/worker.md" "$PROMPTS_DIR/reviewer.md"; do
@@ -411,8 +429,10 @@ commit_iteration_snapshot() {
     fi
   } > "$snapshot_file"
 
-  git add "$snapshot_file" 2>/dev/null && \
-    git commit -m "loop(${LOOP_ID}): iteration ${iter} ${role} snapshot" --no-verify 2>/dev/null || true
+  # Skip pre-commit hooks — orchestrator cannot handle interactive hooks
+  git add "$snapshot_file" 2>>"$MASTER_LOG" && \
+    git commit -m "loop(${LOOP_ID}): iteration ${iter} ${role} snapshot" --no-verify 2>>"$MASTER_LOG" || \
+    log "WARNING: Failed to commit iteration snapshot for iter $iter $role"
 }
 
 # --- Git-committed intelligence: commit session prompts at start ---
@@ -437,8 +457,10 @@ commit_loop_start() {
     echo "branch: $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')"
   } > "${GIT_LOOP_DIR}/config.yaml"
 
-  git add "$GIT_LOOP_DIR" 2>/dev/null && \
-    git commit -m "loop(${LOOP_ID}): start — commit session prompts and config" --no-verify 2>/dev/null || true
+  # Skip pre-commit hooks — orchestrator cannot handle interactive hooks
+  git add "$GIT_LOOP_DIR" 2>>"$MASTER_LOG" && \
+    git commit -m "loop(${LOOP_ID}): start — commit session prompts and config" --no-verify 2>>"$MASTER_LOG" || \
+    log "WARNING: Failed to commit loop start for ${LOOP_ID}"
 }
 
 # --- Git-committed intelligence: commit summary at end ---
@@ -471,8 +493,10 @@ commit_loop_end() {
     fi
   } > "$summary_file"
 
-  git add "$summary_file" 2>/dev/null && \
-    git commit -m "loop(${LOOP_ID}): end — ${stop_reason} after ${iterations_completed} iterations" --no-verify 2>/dev/null || true
+  # Skip pre-commit hooks — orchestrator cannot handle interactive hooks
+  git add "$summary_file" 2>>"$MASTER_LOG" && \
+    git commit -m "loop(${LOOP_ID}): end — ${stop_reason} after ${iterations_completed} iterations" --no-verify 2>>"$MASTER_LOG" || \
+    log "WARNING: Failed to commit loop end summary for ${LOOP_ID}"
 }
 
 # --- PR-per-iteration support ---
