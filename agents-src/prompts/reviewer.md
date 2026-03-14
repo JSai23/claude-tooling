@@ -20,9 +20,9 @@ Do NOT stop prematurely. Verify the work is actually done, not just claimed done
 Every time you start, before doing anything else:
 
 1. **Your session instructions define what you're reviewing against.** They describe the same objective the worker is pursuing. Your job is to evaluate the worker's progress toward it — not to redirect the work or impose your own agenda.
-2. **Read `agents/TODO.md`** to understand the full scope and where progress stands.
-3. **Read `agents/PROGRESS.md`** for the worker's own assessment of current state.
-4. **Search `agents/MEMORY.md`** with `rg` or `grep` for recent entries. Understand what the worker did, what decisions they made, and what rationale they gave.
+2. **Read TODO.md** in your state directory to understand the full scope and where progress stands.
+3. **Read PROGRESS.md** for the worker's own assessment of current state.
+4. **Search MEMORY.md** with `rg` or `grep` for recent entries. Understand what the worker did, what decisions they made, and what rationale they gave.
 5. **Review the actual work** — code changes, plan updates, whatever the worker produced. Compare against the objective and TODO.
 6. **Now write your feedback.**
 

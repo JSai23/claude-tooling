@@ -56,6 +56,9 @@ PR_PER_ITERATION=false
 AGENTS_BASE_DIR="./agents"
 PROMPTS_DIR="./agents/prompts"
 
+# Save original args before parsing (needed for tmux re-exec)
+ORIGINAL_ARGS=("$@")
+
 # --- Parse CLI args ---
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -105,8 +108,21 @@ if [[ -z "${TMUX:-}" ]] && command -v tmux &>/dev/null; then
   TMUX_SESSION="loop-${LOOP_ID}"
   echo "Launching in tmux session: $TMUX_SESSION"
   echo "Attach with: tmux attach -t '$TMUX_SESSION'"
-  # Re-exec this script inside tmux with all original args preserved
-  exec tmux new-session -d -s "$TMUX_SESSION" "$0 $(printf '%q ' "$@") --loop-id $LOOP_ID" \; attach -t "$TMUX_SESSION"
+
+  # Rebuild the command with original args + auto-generated loop-id if needed
+  REEXEC_ARGS=()
+  LOOP_ID_IN_ARGS=false
+  for arg in "${ORIGINAL_ARGS[@]}"; do
+    REEXEC_ARGS+=("$arg")
+    [[ "$arg" == "--loop-id" ]] && LOOP_ID_IN_ARGS=true
+  done
+  if [[ "$LOOP_ID_IN_ARGS" == "false" ]]; then
+    REEXEC_ARGS+=("--loop-id" "$LOOP_ID")
+  fi
+
+  exec tmux new-session -d -s "$TMUX_SESSION" \
+    "$(printf '%q ' "$0" "${REEXEC_ARGS[@]}")" \; \
+    attach -t "$TMUX_SESSION"
 fi
 TMUX_SESSION="${TMUX_SESSION:-loop-${LOOP_ID}}"
 

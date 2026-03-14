@@ -10,14 +10,14 @@
 # Optional: REGISTRY_FILE for cross-repo registry writes.
 
 _log_file() {
-  echo "${AGENTS_BASE_DIR:-.}/agents/.loop-log.jsonl"
+  echo "${AGENTS_BASE_DIR:-./agents}/.loop-log.jsonl"
 }
 
 # log_event EVENT_NAME [EXTRA_JSON]
 # Writes a JSONL line with event, loop_id, timestamp, and merged extra fields.
 log_event() {
   local event="$1"
-  local extra="${2:-{\}}"
+  local extra="${2:-{}}"
   local ts
   ts="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   local log_file
@@ -41,7 +41,7 @@ log_event() {
 # Writes to the cross-repo registry at ~/.claude-loops/registry.jsonl
 registry_event() {
   local event="$1"
-  local extra="${2:-{\}}"
+  local extra="${2:-{}}"
   local ts
   ts="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   local registry="${REGISTRY_FILE:-$HOME/.claude-loops/registry.jsonl}"
