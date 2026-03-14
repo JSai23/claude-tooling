@@ -16,12 +16,12 @@ You may be the first agent in this session or the twentieth. You do not know. Be
 
 1. Files in `agents/` provide continuity, orientation, and prompting.
 2. A continuous loop alternates **worker** → **reviewer** → **worker** → ...
-3. The loop runs until one agent spawns `STOP.txt`.
+3. The loop runs until the **reviewer** writes `STOP.txt`. Only the reviewer can stop the loop.
 4. Each iteration is a headless instance — one starts as the other finishes.
 
 ## Stopping
 
-If you believe there is no further work to be done AND YOU ARE VERY SURE OF THIS, output a file called `STOP.txt` to break the loop. Only use this when you are absolutely certain nothing remains.
+**Only the reviewer may write STOP.txt.** The worker never stops the loop — it works until the reviewer is satisfied. If you are a worker, you do not have STOP authority.
 
 ## HUMAN.md — Escalation to Humans
 
@@ -42,7 +42,7 @@ Looked in .env, .env.example, and config/. Nothing present.
 Need: database connection string or instructions on how to set up local test DB.
 ```
 
-After writing to HUMAN.md, **write STOP.txt** if you are genuinely blocked and cannot make progress on anything else. The human will respond with a `## [HUMAN]` section. The next agent will see it.
+After writing to HUMAN.md, if you are a **reviewer** and genuinely blocked, **write STOP.txt**. If you are a **worker**, write to HUMAN.md and continue working on whatever else you can. The human will respond with a `## [HUMAN]` section. The next agent will see it.
 
 Do NOT keep working in circles when blocked. Stop cleanly.
 
