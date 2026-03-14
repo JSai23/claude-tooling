@@ -334,11 +334,37 @@ The user launches loops across multiple repos from Terminus and Claude mobile. T
 A single user-level file. Each line is a loop lifecycle event:
 
 ```json
-{"event":"start","loop_id":"auth-refactor_20260314","repo":"/home/polydev/myproject","branch":"feat/auth","ts":"2026-03-14T14:30:00Z","pid":12345}
-{"event":"end","loop_id":"auth-refactor_20260314","repo":"/home/polydev/myproject","branch":"feat/auth","ts":"2026-03-14T16:45:00Z","iterations":4,"stop_reason":"reviewer"}
+{"event":"start","loop_id":"auth-refactor_20260314","repo":"/home/polydev/myproject","branch":"feat/auth","ts":"2026-03-14T14:30:00Z","pid":12345,"tmux_session":"loop-auth-refactor_20260314"}
+{"event":"end","loop_id":"auth-refactor_20260314","repo":"/home/polydev/myproject","branch":"feat/auth","ts":"2026-03-14T16:45:00Z","iterations":4,"stop_reason":"reviewer","tmux_session":"loop-auth-refactor_20260314"}
 ```
 
 `run.sh` writes to this registry at loop start and end. The `loop-observe` skill (section 6b) reads it.
+
+### tmux Requirement
+
+**All loops MUST run inside tmux sessions.** This is non-negotiable — loops are long-running background processes and tmux provides:
+- Detach/reattach from any terminal (Terminus, SSH, Claude mobile)
+- Named sessions for easy identification
+- Survival across terminal disconnects
+
+**tmux session naming:** `loop-{loop-id}` (e.g., `loop-auth-refactor_20260314_1430`).
+
+**Launch behavior:** `run.sh` (or the `loop-launch` skill) wraps execution in a tmux session:
+```
+tmux new-session -d -s "loop-{loop-id}" "./agents/run.sh --loop-id {loop-id} ..."
+```
+
+If already inside a tmux session, `run.sh` detects this and skips the wrapping.
+
+**Registry records the tmux session name** so that the `loop-observe` skill can tell the user exactly how to attach:
+```
+tmux attach -t loop-auth-refactor_20260314_1430
+```
+
+**Liveness detection:** The `loop-observe` skill checks if a loop is truly alive by:
+1. Checking the registry for `start` events without matching `end` events
+2. Verifying the tmux session exists (`tmux has-session -t {session_name}`)
+3. If the tmux session is gone but no `end` event was written, marking it as `crashed` and writing a synthetic end event
 
 ```mermaid
 flowchart LR
@@ -480,7 +506,10 @@ Three installable skills cover the full loop lifecycle:
 │  │    branch        │  │  session prompt  │  │  across repos  │ │
 │  │  · creates loop  │  │  anatomy from    │  │                │ │
 │  │    directory     │  │  section 4       │  │                │ │
-│  │  · starts run.sh │  │                  │  │                │ │
+│  │  · starts run.sh │  │                  │  │  Attach:       │ │
+│  │    in tmux       │  │                  │  │  · tmux cmds   │ │
+│  │  · outputs       │  │                  │  │  · crash       │ │
+│  │    attach cmd    │  │                  │  │    detection   │ │
 │  └──────────────────┘  └──────────────────┘  └────────────────┘ │
 │                                                                  │
 │  Installation: user-level (~/.claude/skills/) or                │
@@ -493,11 +522,19 @@ Three installable skills cover the full loop lifecycle:
 2. Verifies session prompts exist (or invokes loop-author-a to create them)
 3. Creates the loop branch from current branch
 4. Creates the loop directory structure
-5. Starts `run.sh` with appropriate flags
+5. Launches `run.sh` inside a named tmux session (`loop-{loop-id}`)
+6. Outputs the `tmux attach -t` command so the user can watch or detach
 
 **loop-author-a** — writes session prompts. Reads the repo's CLAUDE.md, recent git history, and any task context the user provides. Produces SESSION_WORKER.md and SESSION_REVIEWER.md following the guide from section 4.
 
-**loop-observe-a** — reads the cross-repo registry and per-repo loop logs. Answers questions about what's running, what ran, durations, outcomes.
+**loop-observe-a** — the observability skill. Reads the cross-repo registry and per-repo loop logs. Capabilities:
+- **List running loops** — finds `start` events without `end`, verifies tmux sessions are alive, shows `tmux attach -t {session}` commands for each
+- **List completed loops** — filter by repo, branch, date range
+- **Detect crashed loops** — tmux session gone but no `end` event → mark crashed, write synthetic end
+- **Show loop details** — duration, iterations, branch, stop reason, link to `.agent-loops/` committed history
+- **Attach instructions** — for any running loop, outputs the exact `tmux attach -t` command
+
+The skill is designed to be the first thing you run when you open a terminal and want to know what's happening across your repos.
 
 ---
 
