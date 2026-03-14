@@ -6,90 +6,131 @@
 
 | Parameter | Description |
 |-----------|-------------|
-| Plan Type | **Plan-for-plans** (decomposes into sub-plans, not implementable) or **Plan-for-execution** (primitive, used to write code) |
-| Level of Detail | Concrete floor — lower = more detailed. You define this during decomp. |
-| Plan File | Path to the plan you are updating. Create if you are the first agent. |
+| Plan Type | **System plan** (defines architecture and behavior across subsystems — not directly implementable) or **Execution plan** (defines exactly what to build — used to write code) |
+| Plan File | Path to the plan you are writing or updating. Create if you are the first agent. |
 
-## Source Files
-
-| File | Purpose |
-|------|---------|
-| `MANIFESTO.md` | What the software does and why. Purpose and problems. |
-| `USER_THOUGHTS.md` | How the user thinks it should work. The "how" to the manifesto's "what". |
-
-Always read existing files carefully before beginning.
+Always read existing files, source material, and the codebase carefully before beginning.
 
 ---
 
-## Phase 1: Decomposition
+## Core Principles
 
-The manifesto describes purpose — a loosely structured dump of the goal. Break it down:
+### 1. Narrative over reference
 
-1. **Understand the problem space.** What is being solved? Why?
-2. **Research the landscape.** Existing code in the repo, possible solutions, state of the world.
-3. **Frame responsibilities.** Output a clear, concise framing of:
-   - What this software is responsible for
-   - What problems are being solved and why (especially non-obvious ones)
-   - What is in scope and out of scope
-4. **Scope decisions.** Consider user intent from the manifesto. Prefer simpler but representative — too simple loses the goal.
+A plan tells a story. The reader should understand the system by reading it top-to-bottom. Every section connects to the next — explain how you get from the problem to the solution, from the architecture to the behavior, from the behavior to the implementation shape.
+
+Do NOT produce a reference dump. A plan is not a collection of tables and lists — it is a document that builds understanding progressively. If a reader finishes section 3, they should have enough context to predict what section 4 will say.
+
+### 2. Diagrams over code
+
+Use **Mermaid diagrams** as the primary communication tool:
+
+- **Class diagrams** (`classDiagram`) for type relationships, trait hierarchies, struct fields
+- **Sequence diagrams** (`sequenceDiagram`) for runtime workflows, data flow between components, request/response patterns — these are especially powerful for showing how data moves through a system over time. Use them heavily.
+- **Flowcharts** (`flowchart`) for decision logic and state machines
+- **ASCII box diagrams** for quick spatial layouts when Mermaid is overkill
+
+Code in plans is a smell. Before writing any code block, ask: **"Can I show this with a diagram instead?"** The answer is almost always yes.
+
+**When code IS justified** (rare):
+- A specific async pattern, lifetime annotation, or language idiom that cannot be conveyed diagrammatically
+- A Python API surface that the user will literally type (strategy callbacks, config format)
+- A concrete algorithm that is the core of the design (not its scaffolding)
+
+When you do include code, it must be:
+- Minimal — show only the essential pattern, not a full implementation
+- Annotated — explain WHY this code is in the plan, what it demonstrates that a diagram cannot
+- Isolated — never dump multiple code blocks in sequence; each one earns its place individually
+
+### 3. Even depth — no tunneling
+
+Every section should be proportional to its importance. If section 5 is 3x longer than every other section, that's a structural problem — either it needs decomposition into sub-plans, or the depth is unjustified.
+
+When you go deep on a topic, **say why at the top of that section**: "This section goes deeper because X is the hardest problem / the most likely failure mode / the core innovation." The reader should never wonder why they're suddenly reading 5 pages about one component.
+
+If a section is growing disproportionately, that's a signal it should be a separate child plan, not inlined.
+
+### 4. Conciseness is clarity
+
+- Every sentence earns its place. If removing a sentence doesn't lose information, remove it.
+- Tables over prose for structured comparisons.
+- Bullet points over paragraphs for enumerations.
+- Diagrams over text for spatial/temporal relationships.
+- Short section headers that tell you what you'll learn, not just what the section is about.
+
+This is NOT a documentation dump. If the reader has to skim to find what matters, the plan failed.
+
+### 5. Know your plan type
+
+**System plans** and **execution plans** differ fundamentally:
+
+| Aspect | System plan | Execution plan |
+|--------|-------------|----------------|
+| Audience | Architect / tech lead deciding how the system works | Developer building it right now |
+| Depth | Behavior, boundaries, data flow, tradeoffs | Concrete types, function signatures, test cases |
+| Diagrams | Architecture diagrams, data flow, component boundaries | Class diagrams, sequence diagrams, state machines |
+| Code | Almost never — only user-facing API examples | Sparingly — only idioms and patterns the developer needs |
+| Blocks | Behavioral groupings ("what the system does") | Implementation units ("what to build in what order") |
+| Tests | Behavioral expectations and acceptance criteria | Concrete integration tests with setup/assert steps |
+
+The user or session instructions specify which type. If unclear, ask. Do not mix — a system plan with implementation details is confusing; an execution plan without concrete shapes is useless.
 
 ---
 
-## Phase 2: Plan Writing
+## Plan Structure
 
-Three sections, regardless of problem size.
+Regardless of plan type, every plan has three phases. Adapt the content to the plan type.
 
-### 2a. System Design
+### Phase 1: Problem and Scope
 
-Define the system-level solution:
-- Microservice architecture, class architecture, code path layout, data flow — whatever fits.
+1. **What is being solved and why.** One paragraph. No preamble.
+2. **What's in scope and out of scope.** Crisp boundary. Table format.
+3. **Key constraints and assumptions.** What already exists? What must not change? What are we building on top of?
 
-**Key properties:**
-- Define boundaries clearly.
-- Match existing patterns — imply structure from what's already there.
-- Justify choices and reference existing patterns.
-- Note alternatives briefly (no detailed comparison).
+### Phase 2: Design
 
-**Level of detail:** State at the top what needs detail and why. A reader should understand exactly how the system works at the chosen granularity.
+This is the heart of the plan. Structure depends on plan type:
 
-### 2b. Implementation Shape (Scaffolding)
+**For system plans:**
+- How the system behaves (not how it's built)
+- Component boundaries and responsibilities
+- Data flow between components — sequence diagrams
+- Key decisions and their rationale — why this over alternatives
+- Failure modes and how they're handled
 
-Not an implementation plan or execution order. This is **blinders on a horse** — enough shape to focus the real work.
+**For execution plans:**
+- Concrete type/trait/struct relationships — class diagrams
+- Runtime workflows — sequence diagrams showing actual call stacks
+- State management — what lives where, lifecycle
+- Integration points — how this connects to existing code
 
-Define the wire before implementing clients. Endpoints, types, interfaces — so implementation focuses on logic, not orchestration.
+**Both types use diagrams as the primary medium.** Text explains what diagrams can't show: rationale, tradeoffs, constraints.
 
-At the concrete coding level: class structures, code paths, sample classes.
-At the services level: endpoints, subscription/consumption patterns, orchestration paths.
+### Phase 3: Blocks
 
-When someone reads this they should have few remaining questions about *how* at the chosen detail level.
+Break work into units. Upper bound 10-15 blocks.
 
-### 2c. Blocks and Testing
+**For system plans:** Blocks are behavioral groupings — "Market Discovery," "Quote Pipeline," "Order Execution." Each defines expected behavior, not implementation steps.
 
-Break work into sequential or parallelized units.
-
-**Block count:** Upper bound 10–15. No lower bound. Too many = detail too granular for scope.
-
-**Each block defines:**
-1. Exactly what will be built
-2. Exactly what behavior is expected
-3. Exact integration tests (happy + sad paths) — **only for implementable plans**
-
-**Testing principles:**
-- Integration/E2E only (boundary is fuzzy — use interchangeably)
-- Avoid mocking except where genuinely impossible to use the real thing
-- Mark slow tests as skipped
-- Balance: not brittle, not sparse
-
-**For non-implementable plans:** Define behaviors and expected outcomes, not tests.
+**For execution plans:** Blocks are implementation units — ordered, with dependencies. Each defines:
+1. What will be built (concrete files/types/functions)
+2. Expected behavior (what it does when it works)
+3. Integration tests (for execution plans only) — setup, action, assertion
 
 ---
 
-## Principles
+## Anti-Patterns — Do NOT Do These
 
-- **Loose coupling in the plan.** Edits should not cascade.
-- **Keep the plan current.** Search and clean up as you go.
-- **Detail and conciseness balanced.** Redundant = confusing. Sparse = useless.
-- **Mark completeness.** Flag sections needing expansion vs. sections you consider done.
+| Anti-pattern | Why it's wrong | Do this instead |
+|---|---|---|
+| Code dump | Plans show understanding, not implementation | Use class/sequence diagrams |
+| Wall of text | Nobody reads 3 paragraphs when a table works | Tables, bullets, diagrams |
+| Tunneled depth | One section 5x longer than others breaks flow | Decompose or explain why it's deep |
+| Reference manual | A plan is a narrative, not a lookup table | Tell a story, connect sections |
+| Aspirational language | "We should," "ideally," "in the future" | Decide now or mark as out-of-scope |
+| Repeating yourself | Saying the same thing in system design and blocks | Say it once, reference it |
+
+---
 
 ## Continuity
 
