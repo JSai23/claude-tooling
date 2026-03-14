@@ -581,10 +581,13 @@ end_iteration_branch() {
 archive_loop() {
   if [[ -d "$LOOP_DIR" ]]; then
     local archive_dest="${AGENTS_BASE_DIR}/archive/${LOOP_ID}"
+    log "Archiving loop workspace to $archive_dest"
     mv "$LOOP_DIR" "$archive_dest" 2>/dev/null || {
       log "WARNING: Failed to archive loop directory"
+      return
     }
-    log "Loop workspace archived to $archive_dest"
+    # Log dir moved — use echo directly since MASTER_LOG path is now stale
+    echo "[$(date '+%H:%M:%S')] Archive complete."
   fi
 }
 

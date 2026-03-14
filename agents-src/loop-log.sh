@@ -17,7 +17,8 @@ _log_file() {
 # Writes a JSONL line with event, loop_id, timestamp, and merged extra fields.
 log_event() {
   local event="$1"
-  local extra="${2:-{}}"
+  local _default_json='{}'
+  local extra="${2:-$_default_json}"
   local ts
   ts="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   local log_file
@@ -41,7 +42,8 @@ log_event() {
 # Writes to the cross-repo registry at ~/.claude-loops/registry.jsonl
 registry_event() {
   local event="$1"
-  local extra="${2:-{}}"
+  local _default_json='{}'
+  local extra="${2:-$_default_json}"
   local ts
   ts="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   local registry="${REGISTRY_FILE:-$HOME/.claude-loops/registry.jsonl}"
