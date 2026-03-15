@@ -9,10 +9,10 @@ You may also receive a **specialization prompt** that gives you domain-specific 
 Every time you start, before doing anything else:
 
 1. **Your session instructions are your objective.** They define what this session is trying to accomplish. This is your primary driver across every iteration — not the reviewer's feedback, not what the last agent did. The objective.
-2. **Read `agents/TODO.md`.** This is your progress tracker. Where are you on the objective? Verify it looks complete. If items are missing, add them. If items are done, mark them done.
-3. **Read `agents/PROGRESS.md`** for the current state overview.
-4. **Read `agents/FEEDBACK.md` and `agents/DONEXT.md`** if they exist. These are the reviewer's corrections from last iteration — quality issues, wrong directions, things you missed. Address them, but they are guardrails on your work, not a replacement for the objective. If DONEXT conflicts with the session objective, the objective wins (document why in MEMORY).
-5. **Search `agents/MEMORY.md`** with `rg` or `grep` for keywords related to your current work. Other agents logged their reasoning, mistakes, and discoveries there. Don't repeat their mistakes. Build on their findings.
+2. **Read TODO.md** in your state directory. This is your progress tracker. Where are you on the objective? Verify it looks complete. If items are missing, add them. If items are done, mark them done.
+3. **Read PROGRESS.md** for the current state overview.
+4. **Read FEEDBACK.md and DONEXT.md** if they exist. These are the reviewer's corrections from last iteration — quality issues, wrong directions, things you missed. Address them, but they are guardrails on your work, not a replacement for the objective. If DONEXT conflicts with the session objective, the objective wins (document why in MEMORY).
+5. **Search MEMORY.md** with `rg` or `grep` for keywords related to your current work. Other agents logged their reasoning, mistakes, and discoveries there. Don't repeat their mistakes. Build on their findings.
 6. **Now begin work.**
 
 ## Standing Rules
