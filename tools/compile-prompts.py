@@ -38,13 +38,14 @@ def parse_frontmatter(text):
         kv = re.match(r"^([\w][\w-]*):\s*(.*)", line)
         if kv:
             key, val = kv.group(1), kv.group(2).strip()
-            if val == ">":
+            if val in (">", "|"):
+                join_char = " " if val == ">" else "\n"
                 parts = []
                 i += 1
                 while i < len(lines) and (lines[i].startswith("  ") or lines[i].strip() == ""):
                     parts.append(lines[i].strip())
                     i += 1
-                fm[key] = " ".join(p for p in parts if p)
+                fm[key] = join_char.join(p for p in parts if p)
                 continue
             elif val == "" or val.startswith("["):
                 items = []
@@ -122,10 +123,11 @@ def write_agentskill(compiled, name, desc, plugin_name, out_dir, *, source_type=
     skill_dir = out_dir / "agentskills" / skill_name
     skill_dir.mkdir(parents=True, exist_ok=True)
     source_key = "source-agent" if source_type == "agent" else "source-skill"
+    desc_indented = desc.replace("\n", "\n  ")
     content = f"""---
 name: {skill_name}
 description: >
-  {desc}
+  {desc_indented}
 metadata:
   source-plugin: {plugin_name}
   {source_key}: {name}
@@ -143,44 +145,49 @@ def compile_plugin(plugin_dir, out_dir, target_agent=None):
     skills_dir = plugin_dir / "skills"
     plugin_name = plugin_dir.name
 
-    if not agents_dir.exists():
-        print(f"  {plugin_name}: no agents/ directory, skipping")
+    has_agents = agents_dir.exists()
+    has_skills = skills_dir.exists() and any(skills_dir.glob("*/SKILL.md"))
+
+    if not has_agents and not has_skills:
+        print(f"  {plugin_name}: no agents/ or skills/ directory, skipping")
         return True
 
     print(f"\n  {plugin_name}")
     print(f"  {'-' * 40}")
 
     issues = []
-    agent_files = sorted(agents_dir.glob("*.md"))
-
-    if target_agent:
-        agent_files = [f for f in agent_files if f.stem == target_agent]
-        if not agent_files:
-            print(f"    Error: agent '{target_agent}' not found")
-            return False
-
-    # Compile agents
     referenced_skills = set()
-    for agent_file in agent_files:
-        compiled, name, desc, k_skills, a_skills = compile_agent(agent_file, skills_dir)
-        referenced_skills.update(k_skills + a_skills)
-        count = line_count(compiled)
 
-        write_flat(compiled, name, out_dir)
-        write_agentskill(compiled, name, desc, plugin_name, out_dir)
+    # Compile agents (if any)
+    if has_agents:
+        agent_files = sorted(agents_dir.glob("*.md"))
 
-        status = "OK" if count <= LINE_LIMIT else "OVER LIMIT"
-        if count > LINE_LIMIT:
-            issues.append((name, count))
+        if target_agent:
+            agent_files = [f for f in agent_files if f.stem == target_agent]
+            if not agent_files:
+                print(f"    Error: agent '{target_agent}' not found")
+                return False
 
-        print(f"    {name:<20} {count:>4} lines  [{status}]")
-        if k_skills:
-            print(f"      inlined: {', '.join(k_skills)}")
-        if a_skills:
-            print(f"      on-demand: {', '.join(a_skills)}")
+        for agent_file in agent_files:
+            compiled, name, desc, k_skills, a_skills = compile_agent(agent_file, skills_dir)
+            referenced_skills.update(k_skills + a_skills)
+            count = line_count(compiled)
+
+            write_flat(compiled, name, out_dir)
+            write_agentskill(compiled, name, desc, plugin_name, out_dir)
+
+            status = "OK" if count <= LINE_LIMIT else "OVER LIMIT"
+            if count > LINE_LIMIT:
+                issues.append((name, count))
+
+            print(f"    {name:<20} {count:>4} lines  [{status}]")
+            if k_skills:
+                print(f"      inlined: {', '.join(k_skills)}")
+            if a_skills:
+                print(f"      on-demand: {', '.join(a_skills)}")
 
     # Compile standalone skills (not referenced by any agent)
-    if not target_agent and skills_dir.exists():
+    if not target_agent and has_skills:
         standalone = []
         for skill_file in sorted(skills_dir.glob("*/SKILL.md")):
             sfm, sbody = parse_frontmatter(skill_file.read_text())

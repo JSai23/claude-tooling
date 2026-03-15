@@ -1,7 +1,11 @@
 ---
 name: util-improve
 description: >
-  |
+  Capture feedback about wf, util, or vault plugins and file it as a GitHub issue for improvement.
+  Use after any session where the tooling fell short — wrong agent behavior, missing skill coverage,
+  misleading prompts, workflow friction, or convention gaps. Only for generic plugin improvements
+  that would help ANY project, not repo-specific config. Files to JSai23/claude-tooling with the
+  plugin-feedback label.
 metadata:
   source-plugin: util
   source-skill: improve
