@@ -1,0 +1,5 @@
+{
+  "name": "loop",
+  "description": "Agent loop management: launch, author session prompts, observe running loops",
+  "version": "1.0.0"
+}

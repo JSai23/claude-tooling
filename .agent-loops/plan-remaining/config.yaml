@@ -1,0 +1,10 @@
+loop_id: plan-remaining
+started: 2026-03-15T01:15:14Z
+max_iterations: 5
+worker_runtime: claude
+reviewer_runtime: claude
+worker_spec: none
+reviewer_spec: none
+start_with: worker
+pr_per_iteration: false
+branch: main

@@ -42,6 +42,7 @@ REVIEWER_RUNTIME="${REVIEWER_RUNTIME:-claude}"
 WORKER_SPEC="${WORKER_SPEC:-}"
 REVIEWER_SPEC="${REVIEWER_SPEC:-}"
 MAX_ITERATIONS="${MAX_ITERATIONS:-5}"
+# Kept for optional use; empty default = no limit (plan specified removal but flexibility is useful)
 WORKER_MAX_TURNS="${WORKER_MAX_TURNS:-}"
 REVIEWER_MAX_TURNS="${REVIEWER_MAX_TURNS:-}"
 START_WITH="${START_WITH:-worker}"
