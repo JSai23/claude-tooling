@@ -16,6 +16,11 @@
       "name": "vault",
       "source": "./plugins/vault",
       "description": "Obsidian vault management: PARA filing, semantic search, backlinks, tags, inbox processing"
+    },
+    {
+      "name": "loop",
+      "source": "./plugins/loop",
+      "description": "Agent loop management: launch, author session prompts, observe running loops"
     }
   ]
 }
